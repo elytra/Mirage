@@ -4,12 +4,14 @@ import org.lwjgl.opengl.GL20;
 
 import elucent.albedo.event.GatherLightsEvent;
 import elucent.albedo.event.ProfilerStartEvent;
+import elucent.albedo.event.RenderChunkUniformsEvent;
 import elucent.albedo.lighting.Light;
 import elucent.albedo.lighting.LightManager;
 import elucent.albedo.reflection.Fields;
 import elucent.albedo.reflection.NewProfiler;
 import elucent.albedo.util.ShaderUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -68,12 +70,17 @@ public class EventManager {
 	}
 	
 	@SubscribeEvent
-	public void onGatherLights(GatherLightsEvent event){
-		event.getLightList().add(new Light((float)Minecraft.getMinecraft().player.posX, 
-				(float)Minecraft.getMinecraft().player.posY, 
-				(float)Minecraft.getMinecraft().player.posZ, 
-				0.0625f, 0.75f, 1.0f, 1.0f, 
-				4.0f));
+	public void onRenderChunk(RenderChunkUniformsEvent event){
+		if (ShaderUtil.currentProgram == ShaderUtil.lightProgram
+				|| ShaderUtil.currentProgram == ShaderUtil.fastLightProgram){
+			BlockPos pos = event.getChunk().getPosition();
+			int chunkX = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "chunkX");
+			int chunkY = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "chunkY");
+			int chunkZ = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "chunkZ");
+			GL20.glUniform1i(chunkX, pos.getX());
+			GL20.glUniform1i(chunkY, pos.getY());
+			GL20.glUniform1i(chunkZ, pos.getZ());
+		}
 	}
 	
 	@SubscribeEvent
