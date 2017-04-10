@@ -1,0 +1,16 @@
+[
+{
+  "modid": "albedo",
+  "name": "Albedo",
+  "description": "Effects and lighting library.",
+  "version": "1.0",
+  "mcversion": "1.11.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Elucent"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
