@@ -12,8 +12,7 @@ public class ConfigManager {
 
 	//LIGHTING
 	public static int maxLights;
-	public static boolean useFragmentLights;
-	public static boolean blockLightFlickering;
+	public static boolean enableLights;
 
 	public static void init(File configFile)
 	{
@@ -29,8 +28,7 @@ public class ConfigManager {
 		config.addCustomCategoryComment("light", "Settings related to lighting.");
 		
 		maxLights = config.getInt("maxLights", "light", 10, 0, 100, "The maximum number of lights allowed to render in a scene. Lights are sorted nearest-first, so further-away lights will be culled after nearer lights.");
-		useFragmentLights = config.getBoolean("useFragmentLights", "light", false, "Enables per-fragment lighting. This can be very laggy the higher Minecraft's render resolution is, but will yield smoother results.");
-		blockLightFlickering = config.getBoolean("blockLightFlickering", "light", false, "Enables subtle flickering on block-based light sources.");
+		enableLights = config.getBoolean("enableLights", "light", true, "Enables lighting in general.");
 		
 		if (config.hasChanged())
 		{

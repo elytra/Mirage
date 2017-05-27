@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = Albedo.MODID, version = Albedo.VERSION, name = Albedo.NAME)
+@Mod(modid = Albedo.MODID, version = Albedo.VERSION, name = Albedo.NAME, guiFactory = "elucent.albedo.gui.AlbedoGuiFactory")
 public class Albedo
 {
     public static final String MODID = "albedo";
