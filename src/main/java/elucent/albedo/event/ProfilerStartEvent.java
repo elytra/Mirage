@@ -1,5 +1,6 @@
 package elucent.albedo.event;
 
+import elucent.albedo.Albedo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;

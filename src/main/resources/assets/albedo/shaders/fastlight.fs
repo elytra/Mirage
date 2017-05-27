@@ -1,13 +1,11 @@
 #version 120
 
 varying vec3 normal;
-varying vec4 color;
 varying float shift;
 varying vec3 position;
 varying float intens;
 varying vec4 lcolor;
 varying vec4 uv;
-varying vec3 lmapDarkness;
 
 uniform int chunkX;
 uniform int chunkZ;
@@ -17,9 +15,23 @@ uniform vec3 playerPos;
 
 void main()
 {
+	vec3 lightdark = texture2D(lightmap,gl_TexCoord[1].st).xyz;
+	lightdark = clamp(lightdark,0.0f,1.0f);
+	
+	vec4 lcolor = vec4(max(lightdark,lcolor.xyz),lcolor.w);
+	
 	vec4 baseColor = gl_Color * texture2D(sampler,gl_TexCoord[0].st);
-	vec4 color = vec4((baseColor.xyz * (lcolor.xyz * 1.0f)),baseColor.w);
-	color = min(vec4(1.0f),color);
-	color = (1.0f-intens)*baseColor*vec4(lmapDarkness,1) + intens*color;
-	gl_FragColor = vec4(color.xyz * (intens + (1.0f-intens)*lmapDarkness),color.w);
+	
+	vec3 dv = position-playerPos;
+	float dist = max(sqrt(dv.x*dv.x+dv.y*dv.y+dv.z*dv.z) - gl_Fog.start,0.0) / (gl_Fog.end-gl_Fog.start);
+	
+	float fog = gl_Fog.density * dist;
+				  
+	fog = 1.0-clamp( fog, 0.0, 1.0 );
+	  
+	baseColor = vec4(mix( vec3( gl_Fog.color ), baseColor.xyz, fog ).xyz,baseColor.w);
+	
+	vec4 color = vec4(max(mix(baseColor.xyz*lightdark,baseColor.xyz*lcolor.xyz,intens),lightdark*baseColor.xyz),baseColor.w);
+	
+	gl_FragColor = vec4(color.xyz,color.w);
 }

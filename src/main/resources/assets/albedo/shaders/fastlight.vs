@@ -1,9 +1,7 @@
 #version 120
 varying vec3 normal;
-varying vec4 color;
 varying float shift;
 varying vec3 position;
-varying vec3 lmapDarkness;
 varying vec4 uv;
 varying vec4 lcolor;
 varying float intens;
@@ -43,16 +41,19 @@ void main()
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	normal = gl_Normal;
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	position = gl_Vertex.xyz+vec3(chunkX,chunkY,chunkZ);
 	
+	float offset = 0;
+	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_TexCoord[1] = gl_MultiTexCoord1;
+	gl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;
+	
+	gl_Position = gl_ModelViewProjectionMatrix * (gl_Vertex + vec4(0,offset,0,0));
 	
 	gl_FrontColor = gl_Color;
 	
-	lcolor = vec4(0,0,0,1);
+	lcolor = vec4(0,0,0,1.0f);
 	float sumR = 0;
 	float sumG = 0;
 	float sumB = 0;
@@ -61,29 +62,19 @@ void main()
 	float totalIntens = 0;
 	for (int i = 0; i < lightCount; i ++){
 		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
-			float intensity = max(0,1.0f-distSq(lights[i].position,position)/(lights[i].radius*lights[i].radius)) * 1.0f * lights[i].color.w;
+			float intensity = max(0,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
 			totalIntens += intensity;
 			maxIntens = max(maxIntens,intensity);
 		}
 	}
 	for (int i = 0; i < lightCount; i ++){
 		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
-			float intensity = max(0,1.0f-distSq(lights[i].position,position)/(lights[i].radius*lights[i].radius)) * 1.0f * lights[i].color.w;
+			float intensity = max(0f,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
 			sumR += (intensity/totalIntens)*lights[i].color.x;
 			sumG += (intensity/totalIntens)*lights[i].color.y;
 			sumB += (intensity/totalIntens)*lights[i].color.z;
 		}
 	}
-	vec2 blocklighttex = vec2(gl_TexCoord[1].s,1.0f);
-	vec2 sunlighttex = vec2(1.0f,gl_TexCoord[1].t);
-	float x = ticks/2f;
-	vec3 blocklightdark = texture2D(lightmap,blocklighttex*vec2(1.0f/256.0f,1.0f/256.0f)).xyz*2.0f;
-	if (flickerMode == 1){
-		blocklightdark *= (0.95f+0.1f*(((sin(x)+sin(2.0f*x)-2.0f*sin(1.5f*x)+0.5f*sin(3.0f*x)+cos(6.0f*x))+4.449f)/9.226f));
-	}
-	vec3 sunlightdark = texture2D(lightmap,sunlighttex*vec2(1.0f/256f,1.0f/256f)).xyz*2.0f;
-	
-	lmapDarkness = min(vec3(1.0f),max(blocklightdark,sunlightdark));
-	lcolor = vec4(max(sumR*1.5f,lmapDarkness.x), max(sumG*1.5f,lmapDarkness.y), max(sumB*1.5f,lmapDarkness.z), 1);
+	lcolor = vec4(max(sumR*1.5f,0.0f), max(sumG*1.5f,0.0f), max(sumB*1.5f,0.0f), 1.0f);
 	intens = min(1.0f,maxIntens);
 }

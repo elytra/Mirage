@@ -64,8 +64,9 @@ public class LightManager {
 		}
 		
 		lights.sort(distComparator);
-		
-		uploadLights();
+	}
+	
+	public static void clear(){
 		lights.clear();
 	}
 	

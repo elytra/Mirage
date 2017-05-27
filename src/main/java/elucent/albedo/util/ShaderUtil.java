@@ -18,16 +18,18 @@ import elucent.albedo.event.ShaderSelectEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ShaderUtil {
 	
-	public static int currentProgram = 0;
-	public static int lightProgram = 0;
+	public static int currentProgram = -1;
 	public static int fastLightProgram = 0;
+	public static int entityLightProgram = 0;
 	
 	public static void init(){
 		fastLightProgram = loadProgram("/assets/"+Albedo.MODID+"/shaders/fastlight.vs","/assets/"+Albedo.MODID+"/shaders/fastlight.fs");
-		lightProgram = loadProgram("/assets/"+Albedo.MODID+"/shaders/light.vs","/assets/"+Albedo.MODID+"/shaders/light.fs");
+		entityLightProgram = loadProgram("/assets/"+Albedo.MODID+"/shaders/entitylight.vs","/assets/"+Albedo.MODID+"/shaders/entitylight.fs");
 	}
 	
 	public static int loadProgram(String vsh, String fsh){
@@ -41,12 +43,6 @@ public class ShaderUtil {
 	}
 	
 	public static void useProgram(int program){
-		/*ShaderSelectEvent event = new ShaderSelectEvent(program);
-		MinecraftForge.EVENT_BUS.post(event);
-		if (!event.isCanceled()){
-			OpenGlHelper.glUseProgram(event.getShader());
-			currentProgram = event.getShader();
-		}*/
 		OpenGlHelper.glUseProgram(program);
 		currentProgram = program;
 	}
