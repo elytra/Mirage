@@ -34,11 +34,11 @@ void main()
 	}
 	
 	if (fogEnabled == 1){
-		float dist = max((gl_FragCoord.z / gl_FragCoord.w) - gl_Fog.start,0.0);
+		float dist = max((gl_FragCoord.z / gl_FragCoord.w) - gl_Fog.start,0.0f);
 		
 		float fog = gl_Fog.density * dist * gl_Fog.density * dist;
 					  
-		fog = 1.0-clamp( fog, 0.0, 1.0 );
+		fog = 1.0f-clamp( fog, 0.0f, 1.0f );
 		  
 		baseColor = vec4(mix( vec3( gl_Fog.color ), baseColor.xyz, fog ).xyz,baseColor.w);
 	}

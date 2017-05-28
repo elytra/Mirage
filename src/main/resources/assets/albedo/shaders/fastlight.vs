@@ -69,7 +69,7 @@ void main()
 	}
 	for (int i = 0; i < lightCount; i ++){
 		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
-			float intensity = max(0f,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
+			float intensity = max(0.0f,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
 			sumR += (intensity/totalIntens)*lights[i].color.x;
 			sumG += (intensity/totalIntens)*lights[i].color.y;
 			sumB += (intensity/totalIntens)*lights[i].color.z;

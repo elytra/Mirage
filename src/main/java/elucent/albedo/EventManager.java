@@ -18,6 +18,7 @@ import elucent.albedo.util.RenderUtil;
 import elucent.albedo.util.ShaderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -42,7 +43,7 @@ public class EventManager {
 	int ticks = 0;
 	boolean postedLights = false;
 	boolean precedesEntities = true;
-	boolean isGui = false;
+	public static boolean isGui = false;
 	@SubscribeEvent
 	public void onProfilerChange(ProfilerStartEvent event){
 		if (ConfigManager.enableLights){
@@ -225,7 +226,7 @@ public class EventManager {
 		}
 	}
 	
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onGatherLights(GatherLightsEvent e){
 		if (Minecraft.getMinecraft().player != null){
 			e.getLightList().add(new Light((float)Minecraft.getMinecraft().player.posX,
@@ -233,7 +234,7 @@ public class EventManager {
 					(float)Minecraft.getMinecraft().player.posZ,
 					1, 0, 0, 1, 8));
 		}
-	}
+	}*/
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)

@@ -3,6 +3,7 @@ package elucent.albedo.util;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import elucent.albedo.EventManager;
 import elucent.albedo.event.RenderChunkUniformsEvent;
 import elucent.albedo.item.ItemRenderRegistry;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -19,18 +20,32 @@ public class RenderUtil {
 	public static boolean lightingEnabled = false;
 	
 	public static int previousShader = 0;
+	public static boolean enabledLast = false;
 	
 	public static void enableLightingUniforms(){
-		if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
-			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "lightingEnabled");
-			GL20.glUniform1i(lightPos, 1);
+		if (!EventManager.isGui){
+			if (enabledLast){
+				ShaderUtil.useProgram(previousShader);
+				enabledLast = false;
+			}
+			if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
+				int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "lightingEnabled");
+				GL20.glUniform1i(lightPos, 1);
+			}
 		}
 	}
 	
 	public static void disableLightingUniforms(){
-		if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
-			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "lightingEnabled");
-			GL20.glUniform1i(lightPos, 0);
+		if (!EventManager.isGui){
+			if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
+				int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "lightingEnabled");
+				GL20.glUniform1i(lightPos, 0);
+			}
+			if (!enabledLast){
+				previousShader = ShaderUtil.currentProgram;
+				enabledLast = true;
+				ShaderUtil.useProgram(0);
+			}
 		}
 	}
 	

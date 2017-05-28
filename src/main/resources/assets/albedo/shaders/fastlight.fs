@@ -23,11 +23,11 @@ void main()
 	vec4 baseColor = gl_Color * texture2D(sampler,gl_TexCoord[0].st);
 	
 	vec3 dv = position-playerPos;
-	float dist = max(sqrt(dv.x*dv.x+dv.y*dv.y+dv.z*dv.z) - gl_Fog.start,0.0) / (gl_Fog.end-gl_Fog.start);
+	float dist = max(sqrt(dv.x*dv.x+dv.y*dv.y+dv.z*dv.z) - gl_Fog.start,0.0f) / (gl_Fog.end-gl_Fog.start);
 	
 	float fog = gl_Fog.density * dist;
 				  
-	fog = 1.0-clamp( fog, 0.0, 1.0 );
+	fog = 1.0f-clamp( fog, 0.0f, 1.0f );
 	  
 	baseColor = vec4(mix( vec3( gl_Fog.color ), baseColor.xyz, fog ).xyz,baseColor.w);
 	
