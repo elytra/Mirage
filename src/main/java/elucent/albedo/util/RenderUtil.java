@@ -6,10 +6,12 @@ import org.lwjgl.opengl.GL20;
 import elucent.albedo.EventManager;
 import elucent.albedo.event.RenderChunkUniformsEvent;
 import elucent.albedo.item.ItemRenderRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 
 public class RenderUtil {
@@ -51,15 +53,15 @@ public class RenderUtil {
 	
 	public static void enableFogUniforms(){
 		if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
-			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogEnabled");
-			GL20.glUniform1i(lightPos, 1);
+			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogIntensity");
+			GL20.glUniform1f(lightPos, Minecraft.getMinecraft().world.provider.getDimensionType() == DimensionType.NETHER ? 0.015625f : 1.0f);
 		}
 	}
 	
 	public static void disableFogUniforms(){
 		if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
-			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogEnabled");
-			GL20.glUniform1i(lightPos, 0);
+			int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogIntensity");
+			GL20.glUniform1f(lightPos, 0);
 		}
 	}
 	

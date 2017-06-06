@@ -13,7 +13,7 @@ uniform sampler2D lightmap;
 uniform sampler2D brightlayer;
 uniform vec3 playerPos;
 uniform vec4 colorMult;
-uniform int fogEnabled;
+uniform float fogIntensity;
 
 void main()
 {
@@ -33,15 +33,15 @@ void main()
 		baseColor = mix(baseColor,vec4(brightcol.xyz,1.0f),brightcol.w);
 	}
 	
-	if (fogEnabled == 1){
+	//if (fogIntensity > 0){
 		float dist = max((gl_FragCoord.z / gl_FragCoord.w) - gl_Fog.start,0.0f);
 		
-		float fog = gl_Fog.density * dist * gl_Fog.density * dist;
+		float fog = gl_Fog.density * dist * gl_Fog.density * dist * fogIntensity * fogIntensity;
 					  
 		fog = 1.0f-clamp( fog, 0.0f, 1.0f );
 		  
 		baseColor = vec4(mix( vec3( gl_Fog.color ), baseColor.xyz, fog ).xyz,baseColor.w);
-	}
+	//}
 	
 	vec4 color = vec4((mix(baseColor.xyz*lightdark,baseColor.xyz*lcolor.xyz,intens)),baseColor.w);
 	gl_FragColor = vec4(color.xyz * lightsum,color.w);

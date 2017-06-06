@@ -27,6 +27,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntityEndGateway;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -44,8 +45,10 @@ public class EventManager {
 	boolean postedLights = false;
 	boolean precedesEntities = true;
 	public static boolean isGui = false;
+	String section = "";
 	@SubscribeEvent
 	public void onProfilerChange(ProfilerStartEvent event){
+		section = event.getSection();
 		if (ConfigManager.enableLights){
 			if (event.getSection().compareTo("terrain") == 0){
 				isGui = false;
@@ -95,8 +98,8 @@ public class EventManager {
 					ShaderUtil.useProgram(ShaderUtil.entityLightProgram);
 					int lightPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "lightingEnabled");
 					GL20.glUniform1i(lightPos, 1);
-					int fogPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogEnabled");
-					GL20.glUniform1i(fogPos, 1);
+					int fogPos = GL20.glGetUniformLocation(ShaderUtil.currentProgram, "fogIntensity");
+					GL20.glUniform1f(fogPos, Minecraft.getMinecraft().world.provider.getDimensionType() == DimensionType.NETHER ? 0.015625f : 1.0f);
 				}
 			}
 			if (event.getSection().compareTo("blockEntities") == 0){
@@ -141,7 +144,7 @@ public class EventManager {
 			if (event.getEntity() instanceof EntityLightningBolt){
 				ShaderUtil.useProgram(0);
 			}
-			else if (!isGui){
+			else if (section.equalsIgnoreCase("entities") || section.equalsIgnoreCase("blockEntities")){
 				ShaderUtil.useProgram(ShaderUtil.entityLightProgram);
 			}
 			if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
@@ -167,7 +170,7 @@ public class EventManager {
 			if ((event.getEntity()).isPotionActive(Potion.getPotionFromResourceLocation("glowing"))){
 				ShaderUtil.useProgram(0);
 			}
-			else if (!isGui){
+			else if (section.equalsIgnoreCase("entities") || section.equalsIgnoreCase("blockEntities")){
 				ShaderUtil.useProgram(ShaderUtil.entityLightProgram);
 			}
 			if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
@@ -183,7 +186,7 @@ public class EventManager {
 			if (event.getEntity() instanceof TileEntityEndPortal || event.getEntity() instanceof TileEntityEndGateway){
 				ShaderUtil.useProgram(0);
 			}
-			else if (!isGui){
+			else if (section.equalsIgnoreCase("entities") || section.equalsIgnoreCase("blockEntities")){
 				ShaderUtil.useProgram(ShaderUtil.entityLightProgram);
 			}
 			if (ShaderUtil.currentProgram == ShaderUtil.entityLightProgram){
