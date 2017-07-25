@@ -74,7 +74,7 @@ public class ASMTransformer implements IClassTransformer {
 		String transformTypeName = "";
 		if (obfuscated){
 			targetMethod = "handleCameraTransforms";
-			transformTypeName = "Lbro$b;";
+			transformTypeName = "Lbwa$b;";
 		} else {
 			targetMethod = "handleCameraTransforms";
 			transformTypeName = "Lnet/minecraft/client/renderer/block/model/ItemCameraTransforms$TransformType;";
@@ -106,7 +106,6 @@ public class ASMTransformer implements IClassTransformer {
 							"setTransform", "("+transformTypeName+")V", false);
 					code.insertBefore(code.get(2), method);
 					code.insertBefore(code.get(2), new VarInsnNode(Opcodes.ALOAD, paramloc));
-					//System.out.println("Successfully patched ForgeHooksClient!");
 				}
 			}
 		}
@@ -123,8 +122,8 @@ public class ASMTransformer implements IClassTransformer {
 		String transformTypeName = "";
 		if (obfuscated){
 			targetMethod = "a";
-			itemStackName = "Lafj;";
-			bakedModelName = "Lcbh;";
+			itemStackName = "Lain;";
+			bakedModelName = "Lcfw;";
 		} else {
 			targetMethod = "renderItem";
 			itemStackName = "Lnet/minecraft/item/ItemStack;";
@@ -163,7 +162,6 @@ public class ASMTransformer implements IClassTransformer {
 					MethodInsnNode method = new MethodInsnNode(Opcodes.INVOKESTATIC, "elucent/albedo/util/RenderUtil",
 							"renderItem", "("+itemStackName+")V", false);
 					code.insertBefore(returnNode, method);
-					//System.out.println("Successfully patched RenderItem!");
 				}
 			}
 		}
@@ -181,8 +179,8 @@ public class ASMTransformer implements IClassTransformer {
 		if (obfuscated){
 			enableLighting = "f";
 			disableLighting = "g";
-			enableLighting = "o";
-			disableLighting = "p";
+			enableFog = "o";
+			disableFog = "p";
 		} else {
 			enableLighting = "enableLighting";
 			disableLighting = "disableLighting";
@@ -210,7 +208,6 @@ public class ASMTransformer implements IClassTransformer {
 				code.insertBefore(code.get(2), method);
 			}
 		}
-		//System.out.println("Successfully loaded GlStateManager ASM!");
 		
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		classNode.accept(writer);
@@ -223,10 +220,10 @@ public class ASMTransformer implements IClassTransformer {
 		String targetDesc = "";
 		if (obfuscated){
 			targetMethod = "a";
-			entityName = "Lasc;";
-			targetDesc = "(Lasc;FI)V";
+			entityName = "Lavh;";
+			targetDesc = "(Lavh;FI)V";
 		} else {
-			targetMethod = "renderTileEntity";
+			targetMethod = "render";
 			entityName = "Lnet/minecraft/tileentity/TileEntity;";
 			targetDesc = "(Lnet/minecraft/tileentity/TileEntity;FI)V";
 		}
@@ -258,7 +255,7 @@ public class ASMTransformer implements IClassTransformer {
 							"postNewEvent", "("+entityName+")V", false);
 					code.insertBefore(code.get(2), method);
 					code.insertBefore(code.get(2), new VarInsnNode(Opcodes.ALOAD, paramloc));
-					//System.out.println("Successfully loaded TileEntityRendererDispatcher ASM!");
+					System.out.println("Successfully loaded TileEntityRendererDispatcher ASM!");
 				}
 			}
 		}
@@ -275,8 +272,8 @@ public class ASMTransformer implements IClassTransformer {
 		String targetDesc = "";
 		if (obfuscated){
 			targetMethod = "a";
-			entityName = "Lsn;";
-			targetDesc = "(Lsn;DDDFFZ)V";
+			entityName = "Lve;";
+			targetDesc = "(Lve;DDDFFZ)V";
 		} else {
 			targetMethod = "doRenderEntity";
 			entityName = "Lnet/minecraft/entity/Entity;";
@@ -291,7 +288,6 @@ public class ASMTransformer implements IClassTransformer {
 		
 		for (MethodNode m : methods) {
 			if (m.name.compareTo(targetMethod) == 0 && m.desc.compareTo(targetDesc) == 0) {
-				////System.out.println("Attempting to load RenderManager ASM...");
 				InsnList code = m.instructions;
 				List<LocalVariableNode> vars = m.localVariables;
 				int paramloc = 1;
@@ -311,7 +307,6 @@ public class ASMTransformer implements IClassTransformer {
 							"postNewEvent", "("+entityName+")V", false);
 					code.insertBefore(code.get(2), method);
 					code.insertBefore(code.get(2), new VarInsnNode(Opcodes.ALOAD, paramloc));
-					//System.out.println("Successfully loaded RenderManager ASM!");
 				}
 			}
 		}
@@ -324,7 +319,7 @@ public class ASMTransformer implements IClassTransformer {
 	public byte[] patchProfilerASM(String name, byte[] bytes, boolean obfuscated) {
 		String targetMethod = "";
 		if (obfuscated){
-			targetMethod = "a";
+			targetMethod = "c";
 		} else {
 			targetMethod = "endStartSection";
 		}
@@ -365,7 +360,6 @@ public class ASMTransformer implements IClassTransformer {
 							"postNewEvent", "(Ljava/lang/String;)V", false);
 					code.insertBefore(code.get(2), method);
 					code.insertBefore(code.get(2), new VarInsnNode(Opcodes.ALOAD, paramloc));
-					//System.out.println("Successfully loaded Profiler ASM!");
 				}
 			}
 		}
@@ -380,7 +374,7 @@ public class ASMTransformer implements IClassTransformer {
 		String targetMethod = "";
 		if (obfuscated){
 			targetMethod = "a";
-			renderChunkName = "Lbte;";
+			renderChunkName = "Lbxp;";
 		} else {
 			targetMethod = "preRenderChunk";
 			renderChunkName = "Lnet/minecraft/client/renderer/chunk/RenderChunk;";
@@ -422,7 +416,6 @@ public class ASMTransformer implements IClassTransformer {
 					MethodInsnNode method = new MethodInsnNode(Opcodes.INVOKESTATIC, "elucent/albedo/util/RenderUtil",
 							"renderChunkUniforms", "("+renderChunkName+")V", false);
 					code.insertBefore(returnNode, method);
-					//System.out.println("Successfully loaded RenderChunk ASM!");
 				}
 			}
 		}

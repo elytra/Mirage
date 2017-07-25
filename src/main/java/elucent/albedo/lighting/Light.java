@@ -75,7 +75,7 @@ public class Light {
 		}
 		
 		public Builder pos(Vec3d pos) {
-			return pos(pos.xCoord, pos.yCoord, pos.zCoord);
+			return pos(pos.x, pos.y, pos.z);
 		}
 		
 		public Builder pos(Entity e) {

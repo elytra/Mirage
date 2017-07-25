@@ -43,7 +43,7 @@ public class AlbedoCore extends DummyModContainer {
 		ModMetadata meta = getMetadata();
 		meta.modId = "albedocore";
 		meta.name = "Albedo Core";
-		meta.version = "1.0";
+		meta.version = "2.0";
 		meta.credits = "";
 		meta.authorList = Arrays.asList("Elucent");
 		meta.description = "Tiny coremod used to upload RenderChunk positions to shaders.";

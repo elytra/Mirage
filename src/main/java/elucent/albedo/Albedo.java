@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid=Albedo.MODID, version=Albedo.VERSION, name=Albedo.NAME, guiFactory="elucent.albedo.gui.AlbedoGuiFactory", clientSideOnly=true)
 public class Albedo {
 	public static final String MODID = "albedo";
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "2.0";
 	public static final String NAME = "Albedo";
 	
 	public static boolean initialized = false;

@@ -35,9 +35,9 @@ import elucent.albedo.lighting.LightManager;
 import elucent.albedo.util.ShaderProgram;
 import elucent.albedo.util.ShaderUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -238,7 +238,7 @@ public class EventManager {
 			double interpZ = p.lastTickPosZ + ((p.posZ - p.lastTickPosZ) * event.getPartialTicks());
 			GlStateManager.disableDepth();
 			Tessellator tess = Tessellator.getInstance();
-			VertexBuffer vb = tess.getBuffer();
+			BufferBuilder vb = tess.getBuffer();
 			GlStateManager.color(1, 1, 1);
 			GlStateManager.disableTexture2D();
 			GlStateManager.disableLighting();
@@ -258,7 +258,7 @@ public class EventManager {
 		}
 	}
 
-	private void drawLightCaltrops(Tessellator tess, VertexBuffer vb, double interpX, double interpY, double interpZ, float a) {
+	private void drawLightCaltrops(Tessellator tess, BufferBuilder vb, double interpX, double interpY, double interpZ, float a) {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 		int steps = 6;
 		for (Light l : LightManager.lights) {
@@ -277,12 +277,5 @@ public class EventManager {
 			}
 		}
 		tess.draw();
-	}
-
-	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
-	public void onEvent(GuiOpenEvent event) {
-		if (event.getGui() instanceof GuiConfig && ((GuiConfig)event.getGui()).modID.equals(Albedo.MODID)) {
-			event.setGui(new GuiAlbedoConfig(((GuiConfig)event.getGui()).parentScreen));
-		}
 	}
 }
