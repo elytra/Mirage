@@ -6,7 +6,7 @@ varying vec4 uv;
 varying vec4 lcolor;
 varying float intens;
 
-struct Light{
+struct Light {
     vec4 color;
     vec3 position;
 	float radius;
@@ -24,20 +24,19 @@ uniform int maxLights;
 uniform float ticks;
 uniform int flickerMode;
 
-float rand2(vec2 co){
+float rand2(vec2 co) {
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-vec3 rand3(vec3 co){
+vec3 rand3(vec3 co) {
     return vec3(rand2(co.xz)-0.5f,rand2(co.yx)-0.5f,rand2(co.zy)-0.5f);
 }
 
-float distSq(vec3 a, vec3 b){
+float distSq(vec3 a, vec3 b) {
 	return pow((a.x-b.x),2)+pow((a.y-b.y),2)+pow((a.z-b.z),2);
 }
 
-void main()
-{
+void main() {
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	normal = gl_Normal;
@@ -60,15 +59,15 @@ void main()
 	float count = 0;
 	float maxIntens = 0;
 	float totalIntens = 0;
-	for (int i = 0; i < lightCount; i ++){
+	for (int i = 0; i < lightCount; i ++) {
 		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
 			float intensity = max(0,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
 			totalIntens += intensity;
 			maxIntens = max(maxIntens,intensity);
 		}
 	}
-	for (int i = 0; i < lightCount; i ++){
-		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
+	for (int i = 0; i < lightCount; i ++) {
+		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)) {
 			float intensity = max(0.0f,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
 			sumR += (intensity/totalIntens)*lights[i].color.x;
 			sumG += (intensity/totalIntens)*lights[i].color.y;

@@ -1,27 +1,27 @@
 package elucent.albedo.event;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class RenderEntityEvent extends Event{
-	Entity e = null;
-	public RenderEntityEvent(Entity e){
+public class RenderEntityEvent extends Event {
+	private final Entity entity;
+
+	public RenderEntityEvent(Entity entity) {
 		super();
-		this.e = e;
+		this.entity = entity;
 	}
-	
-	public Entity getEntity(){
-		return e;
+
+	public Entity getEntity() {
+		return entity;
 	}
-	
+
 	@Override
-	public boolean isCancelable(){
+	public boolean isCancelable() {
 		return false;
 	}
-	
-	public static void postNewEvent(Entity e){
-		MinecraftForge.EVENT_BUS.post(new RenderEntityEvent(e));
+
+	public static void postNewEvent(Entity entity) {
+		MinecraftForge.EVENT_BUS.post(new RenderEntityEvent(entity));
 	}
 }

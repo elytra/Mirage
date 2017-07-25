@@ -4,13 +4,14 @@ import java.util.Map;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
-@IFMLLoadingPlugin.TransformerExclusions({"elucent.albedo.asm"})
+@IFMLLoadingPlugin.TransformerExclusions({ "elucent.albedo.asm" })
 @IFMLLoadingPlugin.MCVersion("1.11.2")
 public class FMLPlugin implements IFMLLoadingPlugin {
 	public static boolean runtimeDeobfEnabled = false;
+
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[]{"elucent.albedo.asm.ASMTransformer"};
+		return new String[] { "elucent.albedo.asm.ASMTransformer" };
 	}
 
 	@Override
@@ -25,8 +26,8 @@ public class FMLPlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public void injectData(Map<String, Object> data) {
-        runtimeDeobfEnabled = (Boolean) data.get("runtimeDeobfuscationEnabled");
-		
+		runtimeDeobfEnabled = (Boolean) data.get("runtimeDeobfuscationEnabled");
+
 	}
 
 	@Override

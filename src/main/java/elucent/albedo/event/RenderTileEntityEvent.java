@@ -1,28 +1,27 @@
 package elucent.albedo.event;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class RenderTileEntityEvent extends Event{
-	TileEntity e = null;
-	public RenderTileEntityEvent(TileEntity e){
+public class RenderTileEntityEvent extends Event {
+	private final TileEntity tileEntity;
+
+	public RenderTileEntityEvent(TileEntity tileEntity) {
 		super();
-		this.e = e;
+		this.tileEntity = tileEntity;
 	}
-	
-	public TileEntity getEntity(){
-		return e;
+
+	public TileEntity getTileEntity() {
+		return tileEntity;
 	}
-	
+
 	@Override
-	public boolean isCancelable(){
+	public boolean isCancelable() {
 		return false;
 	}
-	
-	public static void postNewEvent(TileEntity e){
+
+	public static void postNewEvent(TileEntity e) {
 		MinecraftForge.EVENT_BUS.post(new RenderTileEntityEvent(e));
 	}
 }

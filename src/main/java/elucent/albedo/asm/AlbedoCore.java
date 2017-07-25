@@ -34,23 +34,22 @@ public class AlbedoCore extends DummyModContainer {
 	}
 
 	@Subscribe
-	public void modConstruction(FMLConstructionEvent evt){
-	
+	public void modConstruction(FMLConstructionEvent evt) {
+
 	}
-	
+
 	@Subscribe
 	public void preInit(FMLPreInitializationEvent evt) {
-	
+
 	}
-	
+
 	@Subscribe
 	public void init(FMLInitializationEvent evt) {
-	
+
 	}
-	
-	
+
 	@Subscribe
 	public void postInit(FMLPostInitializationEvent evt) {
-	
+
 	}
 }

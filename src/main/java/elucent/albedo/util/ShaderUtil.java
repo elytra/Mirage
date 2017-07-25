@@ -1,96 +1,84 @@
 package elucent.albedo.util;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
 import elucent.albedo.Albedo;
-import elucent.albedo.event.ShaderSelectEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 
 public class ShaderUtil {
-	
-	public static int currentProgram = -1;
-	public static int fastLightProgram = 0;
-	public static int entityLightProgram = 0;
-	
-	public static void init(){
-		fastLightProgram = loadProgram("/assets/"+Albedo.MODID+"/shaders/fastlight.vs","/assets/"+Albedo.MODID+"/shaders/fastlight.fs");
-		entityLightProgram = loadProgram("/assets/"+Albedo.MODID+"/shaders/entitylight.vs","/assets/"+Albedo.MODID+"/shaders/entitylight.fs");
+
+	public static ShaderProgram currentProgram = ShaderProgram.NONE;
+	public static ShaderProgram fastLightProgram = ShaderProgram.NONE;
+	public static ShaderProgram entityLightProgram = ShaderProgram.NONE;
+
+	public static void reload(IResourceManager irm) {
+		if (fastLightProgram != null) {
+			fastLightProgram.delete();
+			fastLightProgram = null;
+		}
+		if (entityLightProgram != null) {
+			entityLightProgram.delete();
+			entityLightProgram = null;
+		}
+		fastLightProgram = new ShaderProgram(loadProgram(irm, "shaders/fastlight.vs", "shaders/fastlight.fs"));
+		LogManager.getLogger("Albedo").info("Loaded fastlight shader");
+		entityLightProgram = new ShaderProgram(loadProgram(irm, "shaders/entitylight.vs", "shaders/entitylight.fs"));
+		LogManager.getLogger("Albedo").info("Loaded entitylight shader");
 	}
-	
-	public static int loadProgram(String vsh, String fsh){
-		int vertexShader = createShader(vsh,OpenGlHelper.GL_VERTEX_SHADER);
-		int fragmentShader = createShader(fsh,OpenGlHelper.GL_FRAGMENT_SHADER);
+
+	public static int loadProgram(IResourceManager irm, String vsh, String fsh) {
+		int vertexShader = createShader(irm, vsh, OpenGlHelper.GL_VERTEX_SHADER);
+		int fragmentShader = createShader(irm, fsh, OpenGlHelper.GL_FRAGMENT_SHADER);
+
 		int program = OpenGlHelper.glCreateProgram();
+
 		OpenGlHelper.glAttachShader(program, vertexShader);
 		OpenGlHelper.glAttachShader(program, fragmentShader);
+
 		OpenGlHelper.glLinkProgram(program);
+		
+		if (GL20.glGetProgrami(program, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+			throw new RuntimeException("Error linking program: " + GL20.glGetProgramInfoLog(program, 65536));
+		}
+
 		return program;
 	}
-	
-	public static void useProgram(int program){
-		OpenGlHelper.glUseProgram(program);
-		currentProgram = program;
-	}
-	
-	public static int createShader(String filename, int shaderType) {
-        int shader = OpenGlHelper.glCreateShader(shaderType);
-         
-        if(shader == 0)
-            return 0;
-        try {
-        	ARBShaderObjects.glShaderSourceARB(shader, readFileAsString(filename));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	public static int createShader(IResourceManager irm, String filename, int shaderType) {
+		int shader = OpenGlHelper.glCreateShader(shaderType);
+		if (shader == 0) return 0;
+		
+		try {
+			ByteSource bs = new ByteSource() {
+				@Override
+				public InputStream openStream() throws IOException {
+					return irm.getResource(new ResourceLocation(Albedo.MODID, filename)).getInputStream();
+				}
+			};
+			String src = bs.asCharSource(Charsets.UTF_8).read();
+			ARBShaderObjects.glShaderSourceARB(shader, src);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to read "+filename, e);
 		}
-        OpenGlHelper.glCompileShader(shader);
-        OpenGlHelper.glCompileShader(shader);
-         
-        if (GL20.glGetShaderi(shader, OpenGlHelper.GL_COMPILE_STATUS) == GL11.GL_FALSE)
-            throw new RuntimeException("Error creating shader: " + getLogInfo(shader));
-         
-        return shader;
-    }
-     
-    public static String getLogInfo(int obj) {
-        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
-    }
-     
-    public static String readFileAsString(String filename) throws Exception {
-    	System.out.println("Loading shader ["+filename+"]...");
-        StringBuilder source = new StringBuilder();
-        
-        /*FileWriter f = new FileWriter(filename);
-        f.write("TEST");
-        f.close();*/
-         
-        InputStream in = ShaderUtil.class.getResourceAsStream(filename);
-        
-        String s = "";
-        
-        if (in != null){
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
-				s = reader.lines().collect(Collectors.joining("\n"));
-			}
-        }
-        /*byte[] bytes = s.getBytes();
-        ByteBuffer b = ByteBuffer.allocate(bytes.length);
-        b.put(bytes);*/
-        return s;
-    }
+		
+		OpenGlHelper.glCompileShader(shader);
+
+		if (GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
+			throw new RuntimeException("Error creating shader: " + getLogInfo(shader));
+
+		return shader;
+	}
+
+	public static String getLogInfo(int obj) {
+		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+	}
 }

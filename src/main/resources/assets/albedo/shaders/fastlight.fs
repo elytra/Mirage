@@ -13,8 +13,7 @@ uniform sampler2D sampler;
 uniform sampler2D lightmap;
 uniform vec3 playerPos;
 
-void main()
-{
+void main() {
 	vec3 lightdark = texture2D(lightmap,gl_TexCoord[1].st).xyz;
 	lightdark = clamp(lightdark,0.0f,1.0f);
 	
