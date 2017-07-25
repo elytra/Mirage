@@ -45,10 +45,10 @@ public class MyEntityOrTileEntity extends {Tile,}Entity {
 	@Override
 	public Light provideLight() {
 		return Light.builder()
-					.pos(/* ... */)
-					.color(1, 1, 1)
-					.radius(2)
-					.build();
+				.pos(/* ... */)
+				.color(1, 1, 1)
+				.radius(2)
+				.build();
 	}
 	
 }
