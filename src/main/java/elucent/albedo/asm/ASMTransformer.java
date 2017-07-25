@@ -181,8 +181,8 @@ public class ASMTransformer implements IClassTransformer {
 		if (obfuscated){
 			enableLighting = "f";
 			disableLighting = "g";
-			enableLighting = "o";
-			disableLighting = "p";
+			enableFog = "o";
+			disableFog = "p";
 		} else {
 			enableLighting = "enableLighting";
 			disableLighting = "disableLighting";
