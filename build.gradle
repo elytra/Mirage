@@ -64,6 +64,14 @@ processResources {
 	}
 }
 
+minecraft.coreMod = 'elucent.albedo.asm.FMLPlugin'
+
+jar {
+	manifest {
+		attributes 'FMLCorePlugin': 'elucent.albedo.asm.FMLPlugin', 'FMLCorePluginContainsFMLMod': true
+	}
+}
+
 if (file('private.gradle').exists()) {
 	apply from: 'private.gradle'
 }
