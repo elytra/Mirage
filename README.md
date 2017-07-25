@@ -39,7 +39,7 @@ Finally, you can do something similar to this for any Entity or TileEntity:
 import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface="elucent.albedo.lighting.ILightProvider", modid="albedo")
-public class MyEntityOrTileEntity extends {Tile,}Entity {
+public class MyEntityOrTileEntity extends {Tile,}Entity implements ILightProvider {
 	
 	@Optional.Method(modid="albedo")
 	@Override
