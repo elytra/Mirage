@@ -6,11 +6,17 @@ import elucent.albedo.event.RenderChunkUniformsEvent;
 import elucent.albedo.event.RenderEntityEvent;
 import elucent.albedo.event.RenderTileEntityEvent;
 import elucent.albedo.gui.GuiAlbedoConfig;
+import elucent.albedo.lighting.Light;
 import elucent.albedo.lighting.LightManager;
 import elucent.albedo.util.ShaderProgram;
 import elucent.albedo.util.ShaderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +24,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntityEndGateway;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -53,6 +60,7 @@ public class EventManager {
 				ShaderUtil.fastLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
 				
 				if (!postedLights) {
+					LightManager.clear();
 					LightManager.update(Minecraft.getMinecraft().world);
 					LightManager.uploadLights();
 					
@@ -69,7 +77,6 @@ public class EventManager {
 					
 					ShaderUtil.fastLightProgram.use();
 					postedLights = true;
-					LightManager.clear();
 				}
 			}
 			if (event.getSection().equals("sky")) {
@@ -200,10 +207,52 @@ public class EventManager {
 	@SubscribeEvent
 	public void onRenderWorldLast(RenderWorldLastEvent event) {
 		postedLights = false;
+		EntityPlayer p = Minecraft.getMinecraft().player;
+		if (Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+			double interpX = p.lastTickPosX + ((p.posX - p.lastTickPosX) * event.getPartialTicks());
+			double interpY = p.lastTickPosY + ((p.posY - p.lastTickPosY) * event.getPartialTicks());
+			double interpZ = p.lastTickPosZ + ((p.posZ - p.lastTickPosZ) * event.getPartialTicks());
+			GlStateManager.disableDepth();
+			Tessellator tess = Tessellator.getInstance();
+			VertexBuffer vb = tess.getBuffer();
+			GlStateManager.color(1, 1, 1);
+			GlStateManager.disableTexture2D();
+			GlStateManager.disableLighting();
+			GL11.glLineWidth(4f);
+			GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+			drawLightCaltrops(tess, vb, interpX, interpY, interpZ, 1);
+			GlStateManager.enableTexture2D();
+			GlStateManager.disableBlend();
+			GlStateManager.enableDepth();
+		}
 		if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
 			GlStateManager.disableLighting();
 			ShaderProgram.NONE.use();
 		}
+	}
+
+	private void drawLightCaltrops(Tessellator tess, VertexBuffer vb, double interpX, double interpY, double interpZ, float a) {
+		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+		int steps = 6;
+		for (Light l : LightManager.lights) {
+			for (int i = 0; i < steps; i++) {
+				for (int j = 0; j < steps; j++) {
+					float theta = (i/(float)steps) * (float)(Math.PI*2);
+					float phi = (j/(float)steps) * (float)(Math.PI*2);
+					
+					double x = MathHelper.cos(theta) * MathHelper.sin(phi) * (l.radius/2);
+					double y = MathHelper.sin(theta) * MathHelper.sin(phi) * (l.radius/2);
+					double z = -MathHelper.cos(phi) * (l.radius/2);
+					
+					vb.pos(l.x-interpX, l.y-interpY, l.z-interpZ).color(l.r, l.g, l.b, l.a*a).endVertex();
+					vb.pos((l.x+x)-interpX, (l.y+y)-interpY, (l.z+z)-interpZ).color(l.r, l.g, l.b, 0).endVertex();
+				}
+			}
+		}
+		tess.draw();
 	}
 
 	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
