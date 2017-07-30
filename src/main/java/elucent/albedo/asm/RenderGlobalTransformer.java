@@ -22,29 +22,29 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.event;
+package elucent.albedo.asm;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 
-public class ProfilerStartEvent extends Event {
-	private final String section;
+import com.elytradev.mini.MiniTransformer;
+import com.elytradev.mini.PatchContext;
+import com.elytradev.mini.annotation.Patch;
 
-	public ProfilerStartEvent(String section) {
-		super();
-		this.section = section;
+@Patch.Class("net.minecraft.client.renderer.RenderGlobal")
+public class RenderGlobalTransformer extends MiniTransformer {
+	
+	@Patch.Method(
+			srg="func_174982_a",
+			mcp="renderBlockLayer",
+			descriptor="(Lnet/minecraft/util/BlockRenderLayer;)V"
+		)
+	public void patchRenderBlockLayer(PatchContext ctx) {
+		ctx.jumpToStart();
+		ctx.add(new MethodInsnNode(INVOKESTATIC, "elucent/albedo/asm/Hooks", "enableLightShader", "()V", false));
+		ctx.jumpToEnd();
+		ctx.searchBackward(new InsnNode(RETURN)).jumpBefore();
+		ctx.add(new MethodInsnNode(INVOKESTATIC, "elucent/albedo/asm/Hooks", "disableLightShader", "()V", false));
 	}
-
-	public String getSection() {
-		return section;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return false;
-	}
-
-	public static void postNewEvent(String section) {
-		MinecraftForge.EVENT_BUS.post(new ProfilerStartEvent(section));
-	}
+	
 }

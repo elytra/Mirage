@@ -18,7 +18,10 @@ buildscript {
 
 plugins {
 	id 'net.minecrell.licenser' version '0.3'
+	id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
+
+
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
@@ -30,12 +33,47 @@ version = "1.0"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+repositories {
+	mavenCentral()
+	jcenter()
+	maven {
+		url = 'https://repo.elytradev.com'
+	}
+}
+
 configurations {
 	deploy
 }
 
 dependencies {
 	deploy 'org.apache.maven.wagon:wagon-ssh:2.10'
+	
+	compile 'com.elytradev:mini:0.1-SNAPSHOT'
+	shadow 'com.elytradev:mini:0.1-SNAPSHOT'
+}
+
+jar {
+	classifier = 'slim'
+}
+
+shadowJar {
+	classifier = ''
+	relocate 'com.elytradev.mini', 'elucent.albedo.asm.repackage.com.elytradev.mini'
+	configurations = [project.configurations.shadow]
+}
+
+reobf {
+	shadowJar { mappingType = 'SEARGE' }
+}
+
+tasks.build.dependsOn reobfShadowJar
+
+tasks.reobfJar.doLast {
+	file('build/libs/'+archivesBaseName+'-'+version+'-slim.jar').delete()
+}
+
+artifacts {
+	archives shadowJar
 }
 
 minecraft {
