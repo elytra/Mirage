@@ -24,39 +24,20 @@
 
 package elucent.albedo.asm;
 
-import java.util.Map;
+import com.elytradev.mini.MiniCoremod;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
-@IFMLLoadingPlugin.TransformerExclusions({ "elucent.albedo.asm" })
-@IFMLLoadingPlugin.MCVersion("1.12")
-public class FMLPlugin implements IFMLLoadingPlugin {
-	public static boolean runtimeDeobfEnabled = false;
+@IFMLLoadingPlugin.TransformerExclusions({"com.elytradev.mini", "elucent.albedo.asm"})
+@IFMLLoadingPlugin.MCVersion("1.11.2")
+@IFMLLoadingPlugin.SortingIndex(1001)
+public class FMLPlugin extends MiniCoremod {
 
-	@Override
-	public String[] getASMTransformerClass() {
-		return new String[] { "elucent.albedo.asm.ASMTransformer" };
-	}
-
-	@Override
-	public String getModContainerClass() {
-		return "elucent.albedo.asm.AlbedoCore";
-	}
-
-	@Override
-	public String getSetupClass() {
-		return null;
-	}
-
-	@Override
-	public void injectData(Map<String, Object> data) {
-		runtimeDeobfEnabled = (Boolean) data.get("runtimeDeobfuscationEnabled");
-
-	}
-
-	@Override
-	public String getAccessTransformerClass() {
-		return null;
+	public FMLPlugin() {
+		super(
+				RenderGlobalTransformer.class,
+				ChunkRenderContainerTransformer.class
+			);
 	}
 
 }

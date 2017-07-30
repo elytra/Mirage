@@ -26,7 +26,11 @@ repositories {
 Then, add this to your `dependencies` block:
 
 ```gradle
-compile 'elucent:albedo:2.0-SNAPSHOT'
+<<<<<<< HEAD
+compile 'elucent:albedo:2.0-SNAPSHOT
+=======
+compile 'elucent:albedo:1.0-SNAPSHOT'
+>>>>>>> 4c11884... Fix README derp
 ```
 
 Use 1.0-SNAPSHOT instead if you're on 1.11.2.

@@ -22,30 +22,32 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.event;
+package elucent.albedo.asm;
 
-import net.minecraft.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-public class RenderEntityEvent extends Event {
-	private final Entity entity;
+import com.elytradev.mini.MiniTransformer;
+import com.elytradev.mini.PatchContext;
+import com.elytradev.mini.annotation.Patch;;
 
-	public RenderEntityEvent(Entity entity) {
-		super();
-		this.entity = entity;
+@Patch.Class("net.minecraft.client.renderer.ChunkRenderContainer")
+public class ChunkRenderContainerTransformer extends MiniTransformer {
+
+	@Patch.Method(
+			srg="func_178003_a",
+			mcp="preRenderChunk",
+			descriptor="(Lnet/minecraft/client/renderer/chunk/RenderChunk;)V"
+		)
+	public void patchPreRenderChunk(PatchContext ctx) {
+		ctx.jumpToEnd();
+		ctx.searchBackward(new InsnNode(RETURN)).jumpBefore();
+		ctx.add(
+				new VarInsnNode(ALOAD, 1),
+				new MethodInsnNode(INVOKESTATIC, "elucent/albedo/asm/Hooks", "preRenderChunk", "(Lnet/minecraft/client/renderer/chunk/RenderChunk;)V", false)
+			);
 	}
-
-	public Entity getEntity() {
-		return entity;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return false;
-	}
-
-	public static void postNewEvent(Entity entity) {
-		MinecraftForge.EVENT_BUS.post(new RenderEntityEvent(entity));
-	}
+	
+	
 }

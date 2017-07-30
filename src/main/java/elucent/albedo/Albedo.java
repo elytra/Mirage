@@ -24,10 +24,14 @@
 
 package elucent.albedo;
 
+import org.apache.logging.log4j.LogManager;
+import org.lwjgl.opengl.GLContext;
+
 import elucent.albedo.util.ShaderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -42,13 +46,18 @@ public class Albedo {
 
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
+		ConfigManager.init(event.getSuggestedConfigurationFile());
+		
+		if (!GLContext.getCapabilities().OpenGL20) {
+			LogManager.getLogger("Albedo").error("OpenGL 2.0 or later is required for Albedo. Disabling.");
+			Loader.instance().activeModContainer().setEnabledState(false);
+			return;
+		}
 		((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener((irm) -> {
 			ShaderUtil.reload(irm);
 		});
 		
 		MinecraftForge.EVENT_BUS.register(new EventManager());
 		MinecraftForge.EVENT_BUS.register(new ConfigManager());
-		
-		ConfigManager.init(event.getSuggestedConfigurationFile());
 	}
 }
