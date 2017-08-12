@@ -29,7 +29,7 @@ import com.elytradev.mini.MiniCoremod;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.TransformerExclusions({"com.elytradev.mini", "elucent.albedo.asm"})
-@IFMLLoadingPlugin.MCVersion("1.11.2")
+@IFMLLoadingPlugin.MCVersion("1.12")
 @IFMLLoadingPlugin.SortingIndex(1001)
 public class FMLPlugin extends MiniCoremod {
 
