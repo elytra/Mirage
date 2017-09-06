@@ -54,9 +54,9 @@ public class Shaders {
 			entityLightProgram = null;
 		}
 		fastLightProgram = new ShaderProgram(loadProgram(irm, "shaders/fastlight.vs", "shaders/fastlight.fs"));
-		LogManager.getLogger("Albedo").info("Loaded fastlight shader");
+		LogManager.getLogger("Mirage").info("Loaded fastlight shader");
 		entityLightProgram = new ShaderProgram(loadProgram(irm, "shaders/entitylight.vs", "shaders/entitylight.fs"));
-		LogManager.getLogger("Albedo").info("Loaded entitylight shader");
+		LogManager.getLogger("Mirage").info("Loaded entitylight shader");
 	}
 
 	public static int loadProgram(IResourceManager irm, String vsh, String fsh) {
