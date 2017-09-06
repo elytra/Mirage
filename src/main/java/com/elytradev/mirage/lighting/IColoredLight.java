@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public interface ILightProvider {
+public interface IColoredLight {
 	@SideOnly(Side.CLIENT)
 	@Nullable
-	public Light provideLight();
+	public Light getColoredLight();
 }

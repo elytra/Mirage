@@ -72,13 +72,13 @@ public class LightManager {
 		MinecraftForge.EVENT_BUS.post(event);
 		
 		for (Entity e : world.getLoadedEntityList()) {
-			if (e instanceof ILightProvider){
-				addLight(((ILightProvider)e).provideLight());
+			if (e instanceof IColoredLight){
+				addLight(((IColoredLight)e).getColoredLight());
 			}
 		}
 		for (TileEntity t : world.loadedTileEntityList) {
-			if (t instanceof ILightProvider) {
-				addLight(((ILightProvider)t).provideLight());
+			if (t instanceof IColoredLight) {
+				addLight(((IColoredLight)t).getColoredLight());
 			}
 		}
 		
