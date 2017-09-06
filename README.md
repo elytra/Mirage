@@ -4,12 +4,16 @@
 
 [>> Jenkins (Downloads) <<](https://ci.elytradev.com/job/elytra/job/Mirage/)
 
-*Fast colored lighting for entities and blocks.*
+* Neat rendering tricks with an API.*
 
-Mirage is a library/coremod originally created by Elucent for use in Embers.
-With permission, unascribed forked it, cleaned it up a bit, and ported it to
-1.12. It's based on shaders and is *completely client-sided*, so it's relatively
-lag-free, but that also means Mirage lights cannot prevent mob spawns.
+Mirage is a library and coremod containing some neat rendering tricks for use in
+any mod. It started life as an update of Elucent's Albedo to 1.12 (best known for
+the lighting effects in Embers), and is slowly becoming a more complete render
+tweaks library.
+
+The library was renamed from Albedo to Mirage to avoid naming conflicts after
+Elucent picked Albedo back up. Mirage's API is intentionally incompatible with
+Albedo as a result.
 
 ## Usage
 
@@ -26,10 +30,12 @@ repositories {
 Then, add this to your `dependencies` block:
 
 ```gradle
-compile 'elucent:albedo:2.0-SNAPSHOT'
+compile 'com.elytradev:mirage:2.0.1-SNAPSHOT'
 ```
 
-Use 1.0-SNAPSHOT instead if you're on 1.11.2.
+Switch to the 1.11.2 branch for 1.11.2 instructions, which are for Albedo
+post-fork instead of Mirage. You may also want to try just using
+[Albedo pre-fork](https://github.com/elucent/Albedo).
 
 **Note**: If you get a 'peer not authenticated' error, you need to update
 Gradle. Older versions of Gradle include a broken Apache HttpClient that doesn't
@@ -40,12 +46,12 @@ Finally, you can do something similar to this for any Entity or TileEntity:
 ```java
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="elucent.albedo.lighting.ILightProvider", modid="mirage")
-public class MyEntityOrTileEntity extends {Tile,}Entity implements ILightProvider {
+@Optional.Interface(iface="com.elytradev.mirage.lighting.ILightProvider", modid="mirage")
+public class MyEntityOrTileEntity extends {Tile,}Entity implements IColoredLight {
 	
-	@Optional.Method(modid="albedo")
+	@Optional.Method(modid="mirage")
 	@Override
-	public Light provideLight() {
+	public Light getColoredLight() {
 		return Light.builder()
 				.pos(/* ... */)
 				.color(1, 1, 1)
