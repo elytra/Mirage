@@ -22,15 +22,16 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.asm;
+package com.elytradev.mirage.asm;
 
 import org.lwjgl.opengl.GL11;
 
-import elucent.albedo.ConfigManager;
-import elucent.albedo.EventManager;
-import elucent.albedo.lighting.LightManager;
-import elucent.albedo.util.ShaderProgram;
-import elucent.albedo.util.ShaderUtil;
+import com.elytradev.mirage.ConfigManager;
+import com.elytradev.mirage.EventManager;
+import com.elytradev.mirage.lighting.LightManager;
+import com.elytradev.mirage.shader.ShaderProgram;
+import com.elytradev.mirage.shader.Shaders;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,30 +42,30 @@ public class Hooks {
 	public static void enableLightShader() {
 		if (ConfigManager.enableLights) {
 			EntityPlayer p = Minecraft.getMinecraft().player;
-			ShaderUtil.fastLightProgram.use();
+			Shaders.fastLightProgram.use();
 			
-			ShaderUtil.fastLightProgram.getUniform("ticks").setFloat(EventManager.ticks + Minecraft.getMinecraft().getRenderPartialTicks());
-			ShaderUtil.fastLightProgram.getUniform("sampler").setInt(0);
-			ShaderUtil.fastLightProgram.getUniform("lightmap").setInt(1);
-			ShaderUtil.fastLightProgram.getUniform("brightlayer").setInt(2);
-			ShaderUtil.fastLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
+			Shaders.fastLightProgram.getUniform("ticks").setFloat(EventManager.ticks + Minecraft.getMinecraft().getRenderPartialTicks());
+			Shaders.fastLightProgram.getUniform("sampler").setInt(0);
+			Shaders.fastLightProgram.getUniform("lightmap").setInt(1);
+			Shaders.fastLightProgram.getUniform("brightlayer").setInt(2);
+			Shaders.fastLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
 			
 			LightManager.clear();
 			LightManager.update(Minecraft.getMinecraft().world);
 			LightManager.uploadLights();
 			
-			ShaderUtil.entityLightProgram.use();
+			Shaders.entityLightProgram.use();
 			
-			ShaderUtil.entityLightProgram.getUniform("sampler").setInt(0);
-			ShaderUtil.entityLightProgram.getUniform("lightmap").setInt(1);
-			ShaderUtil.entityLightProgram.getUniform("brightlayer").setInt(2);
+			Shaders.entityLightProgram.getUniform("sampler").setInt(0);
+			Shaders.entityLightProgram.getUniform("lightmap").setInt(1);
+			Shaders.entityLightProgram.getUniform("brightlayer").setInt(2);
 			
 			LightManager.uploadLights();
 			
-			ShaderUtil.entityLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
-			ShaderUtil.entityLightProgram.getUniform("lightingEnabled").setInt(GL11.glIsEnabled(GL11.GL_LIGHTING) ? 1 : 0);
+			Shaders.entityLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
+			Shaders.entityLightProgram.getUniform("lightingEnabled").setInt(GL11.glIsEnabled(GL11.GL_LIGHTING) ? 1 : 0);
 			
-			ShaderUtil.fastLightProgram.use();
+			Shaders.fastLightProgram.use();
 		}
 	}
 	
@@ -78,9 +79,9 @@ public class Hooks {
 		if (ConfigManager.enableLights) {
 			BlockPos pos = c.getPosition();
 			
-			ShaderUtil.fastLightProgram.getUniform("chunkX").setInt(pos.getX());
-			ShaderUtil.fastLightProgram.getUniform("chunkY").setInt(pos.getY());
-			ShaderUtil.fastLightProgram.getUniform("chunkZ").setInt(pos.getZ());
+			Shaders.fastLightProgram.getUniform("chunkX").setInt(pos.getX());
+			Shaders.fastLightProgram.getUniform("chunkY").setInt(pos.getY());
+			Shaders.fastLightProgram.getUniform("chunkZ").setInt(pos.getZ());
 		}
 	}
 	

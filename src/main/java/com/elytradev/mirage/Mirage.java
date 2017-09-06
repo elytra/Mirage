@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
-package elucent.albedo;
+package com.elytradev.mirage;
 
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GLContext;
 
-import elucent.albedo.util.ShaderUtil;
+import com.elytradev.mirage.shader.Shaders;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,11 +37,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid=Albedo.MODID, version=Albedo.VERSION, name=Albedo.NAME, guiFactory="elucent.albedo.gui.AlbedoGuiFactory", clientSideOnly=true)
-public class Albedo {
-	public static final String MODID = "albedo";
+@Mod(modid=Mirage.MODID, version=Mirage.VERSION, name=Mirage.NAME, guiFactory="com.elytradev.mirage.gui.MirageGuiFactory", clientSideOnly=true)
+public class Mirage {
+	public static final String MODID = "mirage";
 	public static final String VERSION = "2.0";
-	public static final String NAME = "Albedo";
+	public static final String NAME = "Mirage";
 	
 	public static boolean initialized = false;
 
@@ -49,12 +50,12 @@ public class Albedo {
 		ConfigManager.init(event.getSuggestedConfigurationFile());
 		
 		if (!GLContext.getCapabilities().OpenGL20) {
-			LogManager.getLogger("Albedo").error("OpenGL 2.0 or later is required for Albedo. Disabling.");
+			LogManager.getLogger("Mirage").error("OpenGL 2.0 or later is required for Mirage. Disabling.");
 			Loader.instance().activeModContainer().setEnabledState(false);
 			return;
 		}
 		((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener((irm) -> {
-			ShaderUtil.reload(irm);
+			Shaders.reload(irm);
 		});
 		
 		MinecraftForge.EVENT_BUS.register(new EventManager());

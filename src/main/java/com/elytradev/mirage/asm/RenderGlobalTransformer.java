@@ -22,34 +22,29 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.gui;
+package com.elytradev.mirage.asm;
 
-import java.util.Set;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.IModGuiFactory;
+import com.elytradev.mini.MiniTransformer;
+import com.elytradev.mini.PatchContext;
+import com.elytradev.mini.annotation.Patch;
 
-public class AlbedoGuiFactory implements IModGuiFactory {
-
-	@Override
-	public void initialize(Minecraft minecraftInstance) {
-
-	}
-
-	@Override
-	public boolean hasConfigGui() {
-		return true;
+@Patch.Class("net.minecraft.client.renderer.RenderGlobal")
+public class RenderGlobalTransformer extends MiniTransformer {
+	
+	@Patch.Method(
+			srg="func_174982_a",
+			mcp="renderBlockLayer",
+			descriptor="(Lnet/minecraft/util/BlockRenderLayer;)V"
+		)
+	public void patchRenderBlockLayer(PatchContext ctx) {
+		ctx.jumpToStart();
+		ctx.add(new MethodInsnNode(INVOKESTATIC, "com/elytradev/mirage/asm/Hooks", "enableLightShader", "()V", false));
+		ctx.jumpToEnd();
+		ctx.searchBackward(new InsnNode(RETURN)).jumpBefore();
+		ctx.add(new MethodInsnNode(INVOKESTATIC, "com/elytradev/mirage/asm/Hooks", "disableLightShader", "()V", false));
 	}
 	
-	@Override
-	public GuiScreen createConfigGui(GuiScreen parentScreen) {
-		return new GuiAlbedoConfig(parentScreen);
-	}
-
-	@Override
-	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-		return null;
-	}
-
 }

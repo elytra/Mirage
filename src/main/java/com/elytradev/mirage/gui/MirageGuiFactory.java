@@ -22,23 +22,34 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.gui;
+package com.elytradev.mirage.gui;
 
-import elucent.albedo.Albedo;
-import elucent.albedo.ConfigManager;
+import java.util.Set;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.IModGuiFactory;
 
-public class GuiAlbedoConfig extends GuiConfig {
+public class MirageGuiFactory implements IModGuiFactory {
 
-	public GuiAlbedoConfig(GuiScreen parentScreen) {
-		super(parentScreen, 
-				new ConfigElement(ConfigManager.config.getCategory("light")).getChildElements(),
-				Albedo.MODID,
-				false,
-				false,
-				"Albedo Config");
+	@Override
+	public void initialize(Minecraft minecraftInstance) {
+
+	}
+
+	@Override
+	public boolean hasConfigGui() {
+		return true;
+	}
+	
+	@Override
+	public GuiScreen createConfigGui(GuiScreen parentScreen) {
+		return new GuiMirageConfig(parentScreen);
+	}
+
+	@Override
+	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
+		return null;
 	}
 
 }

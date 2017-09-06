@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.lighting;
+package com.elytradev.mirage.lighting;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,10 +35,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import elucent.albedo.util.ShaderUtil;
-import elucent.albedo.ConfigManager;
-import elucent.albedo.event.GatherLightsEvent;
-import elucent.albedo.lighting.Light;
+
+import com.elytradev.mirage.ConfigManager;
+import com.elytradev.mirage.event.GatherLightsEvent;
+import com.elytradev.mirage.lighting.Light;
+import com.elytradev.mirage.shader.Shaders;
 
 public class LightManager {
 	public static final ArrayList<Light> lights = Lists.newArrayList();
@@ -50,18 +51,18 @@ public class LightManager {
 	}
 	
 	public static void uploadLights() {
-		ShaderUtil.currentProgram.getUniform("lightCount").setInt(lights.size());
+		Shaders.currentProgram.getUniform("lightCount").setInt(lights.size());
 		for (int i = 0; i < Math.min(ConfigManager.maxLights, lights.size()); i++) {
 			if (i < lights.size()) {
 				Light l = lights.get(i);
 		
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].position").setFloat(l.x, l.y, l.z);
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].color").setFloat(l.r, l.g, l.b, l.a);
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].radius").setFloat(l.radius);
+				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(l.x, l.y, l.z);
+				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(l.r, l.g, l.b, l.a);
+				Shaders.currentProgram.getUniform("lights["+i+"].radius").setFloat(l.radius);
 			} else {
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].position").setFloat(0, 0, 0);
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].color").setFloat(0, 0, 0, 0);
-				ShaderUtil.currentProgram.getUniform("lights["+i+"].radius").setFloat(0);
+				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(0, 0, 0);
+				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(0, 0, 0, 0);
+				Shaders.currentProgram.getUniform("lights["+i+"].radius").setFloat(0);
 			}
 		}
 	}

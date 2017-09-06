@@ -22,22 +22,27 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.asm;
+package com.elytradev.mirage.event;
 
-import com.elytradev.mini.MiniCoremod;
+import java.util.ArrayList;
 
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import com.elytradev.mirage.lighting.Light;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
-@IFMLLoadingPlugin.TransformerExclusions({"com.elytradev.mini", "elucent.albedo.asm"})
-@IFMLLoadingPlugin.MCVersion("1.12")
-@IFMLLoadingPlugin.SortingIndex(1001)
-public class FMLPlugin extends MiniCoremod {
+public class GatherLightsEvent extends Event {
+	private final ArrayList<Light> lights;
 
-	public FMLPlugin() {
-		super(
-				RenderGlobalTransformer.class,
-				ChunkRenderContainerTransformer.class
-			);
+	public GatherLightsEvent(ArrayList<Light> lights) {
+		super();
+		this.lights = lights;
 	}
 
+	public ArrayList<Light> getLightList() {
+		return lights;
+	}
+
+	@Override
+	public boolean isCancelable() {
+		return false;
+	}
 }

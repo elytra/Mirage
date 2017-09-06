@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.util;
+package com.elytradev.mirage.shader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +33,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import elucent.albedo.Albedo;
+import com.elytradev.mirage.Mirage;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
-public class ShaderUtil {
+public class Shaders {
 
 	public static ShaderProgram currentProgram = ShaderProgram.NONE;
 	public static ShaderProgram fastLightProgram = ShaderProgram.NONE;
@@ -85,7 +85,7 @@ public class ShaderUtil {
 			ByteSource bs = new ByteSource() {
 				@Override
 				public InputStream openStream() throws IOException {
-					return irm.getResource(new ResourceLocation(Albedo.MODID, filename)).getInputStream();
+					return irm.getResource(new ResourceLocation(Mirage.MODID, filename)).getInputStream();
 				}
 			};
 			String src = bs.asCharSource(Charsets.UTF_8).read();

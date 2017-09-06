@@ -26,9 +26,9 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-group = "elucent"
-archivesBaseName = "Albedo"
-version = "2.0"
+group = "com.elytradev"
+archivesBaseName = "Mirage"
+version = "2.0.1"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -58,7 +58,7 @@ jar {
 
 shadowJar {
 	classifier = ''
-	relocate 'com.elytradev.mini', 'elucent.albedo.asm.repackage.com.elytradev.mini'
+	relocate 'com.elytradev.mini', 'com.elytradev.albedo.asm.repackage.com.elytradev.mini'
 	configurations = [project.configurations.shadow]
 }
 
@@ -102,11 +102,11 @@ processResources {
 	}
 }
 
-minecraft.coreMod = 'elucent.albedo.asm.FMLPlugin'
+minecraft.coreMod = 'com.elytradev.mirage.asm.FMLPlugin'
 
 jar {
 	manifest {
-		attributes 'FMLCorePlugin': 'elucent.albedo.asm.FMLPlugin', 'FMLCorePluginContainsFMLMod': true
+		attributes 'FMLCorePlugin': 'com.elytradev.mirage.asm.FMLPlugin', 'FMLCorePluginContainsFMLMod': true
 	}
 }
 

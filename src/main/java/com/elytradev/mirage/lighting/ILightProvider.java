@@ -22,27 +22,15 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.event;
+package com.elytradev.mirage.lighting;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 
-import elucent.albedo.lighting.Light;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class GatherLightsEvent extends Event {
-	private final ArrayList<Light> lights;
-
-	public GatherLightsEvent(ArrayList<Light> lights) {
-		super();
-		this.lights = lights;
-	}
-
-	public ArrayList<Light> getLightList() {
-		return lights;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return false;
-	}
+public interface ILightProvider {
+	@SideOnly(Side.CLIENT)
+	@Nullable
+	public Light provideLight();
 }

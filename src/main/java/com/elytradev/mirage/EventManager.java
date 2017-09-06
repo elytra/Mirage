@@ -22,12 +22,11 @@
  * SOFTWARE.
  */
 
-package elucent.albedo;
+package com.elytradev.mirage;
 
 import org.lwjgl.opengl.GL11;
-import elucent.albedo.gui.GuiAlbedoConfig;
-import elucent.albedo.lighting.Light;
-import elucent.albedo.lighting.LightManager;
+import com.elytradev.mirage.lighting.Light;
+import com.elytradev.mirage.lighting.LightManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,10 +36,7 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;

@@ -1,13 +1,13 @@
 [
 {
-  "modid": "albedo",
-  "name": "Albedo",
+  "modid": "mirage",
+  "name": "Mirage",
   "description": "Effects and lighting library.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["Elucent", "unascribed"],
+  "authorList": ["Elucent", "unascribed", "Falkreon],
   "credits": "",
   "logoFile": "",
   "screenshots": [],

@@ -22,29 +22,22 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.asm;
+package com.elytradev.mirage.asm;
 
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
+import com.elytradev.mini.MiniCoremod;
 
-import com.elytradev.mini.MiniTransformer;
-import com.elytradev.mini.PatchContext;
-import com.elytradev.mini.annotation.Patch;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
-@Patch.Class("net.minecraft.client.renderer.RenderGlobal")
-public class RenderGlobalTransformer extends MiniTransformer {
-	
-	@Patch.Method(
-			srg="func_174982_a",
-			mcp="renderBlockLayer",
-			descriptor="(Lnet/minecraft/util/BlockRenderLayer;)V"
-		)
-	public void patchRenderBlockLayer(PatchContext ctx) {
-		ctx.jumpToStart();
-		ctx.add(new MethodInsnNode(INVOKESTATIC, "elucent/albedo/asm/Hooks", "enableLightShader", "()V", false));
-		ctx.jumpToEnd();
-		ctx.searchBackward(new InsnNode(RETURN)).jumpBefore();
-		ctx.add(new MethodInsnNode(INVOKESTATIC, "elucent/albedo/asm/Hooks", "disableLightShader", "()V", false));
+@IFMLLoadingPlugin.TransformerExclusions({"com.elytradev.mini", "com.elytradev.mirage.asm"})
+@IFMLLoadingPlugin.MCVersion("1.12")
+@IFMLLoadingPlugin.SortingIndex(1001)
+public class FMLPlugin extends MiniCoremod {
+
+	public FMLPlugin() {
+		super(
+				RenderGlobalTransformer.class,
+				ChunkRenderContainerTransformer.class
+			);
 	}
-	
+
 }

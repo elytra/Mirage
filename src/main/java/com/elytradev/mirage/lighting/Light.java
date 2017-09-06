@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.lighting;
+package com.elytradev.mirage.lighting;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;

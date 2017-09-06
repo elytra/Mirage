@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package elucent.albedo;
+package com.elytradev.mirage;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -61,7 +61,7 @@ public class ConfigManager {
 
 	@SubscribeEvent
 	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-		if (event.getModID().equalsIgnoreCase(Albedo.MODID)) {
+		if (event.getModID().equalsIgnoreCase(Mirage.MODID)) {
 			load();
 		}
 	}

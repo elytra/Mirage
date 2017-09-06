@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package elucent.albedo.util;
+package com.elytradev.mirage.shader;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -123,7 +123,7 @@ public class ShaderProgram {
 	}
 	
 	public void use() {
-		ShaderUtil.currentProgram = this;
+		Shaders.currentProgram = this;
 		OpenGlHelper.glUseProgram(program);
 	}
 	
@@ -136,7 +136,7 @@ public class ShaderProgram {
 	}
 
 	public boolean isCurrentProgram() {
-		return ShaderUtil.currentProgram == this;
+		return Shaders.currentProgram == this;
 	}
 	
 }

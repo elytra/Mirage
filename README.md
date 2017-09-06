@@ -1,15 +1,15 @@
-<img src="https://raw.githubusercontent.com/elytra/Albedo/1.12/doc/logo.png" align="right" width="180px"/>
+<img src="https://raw.githubusercontent.com/elytra/Mirage/1.12/doc/logo.png" align="right" width="180px"/>
 
-# Albedo
+# Mirage
 
-[>> Jenkins (Downloads) <<](https://ci.elytradev.com/job/elytra/job/Albedo/)
+[>> Jenkins (Downloads) <<](https://ci.elytradev.com/job/elytra/job/Mirage/)
 
 *Fast colored lighting for entities and blocks.*
 
-Albedo is a library/coremod originally created by Elucent for use in Embers.
+Mirage is a library/coremod originally created by Elucent for use in Embers.
 With permission, unascribed forked it, cleaned it up a bit, and ported it to
 1.12. It's based on shaders and is *completely client-sided*, so it's relatively
-lag-free, but that also means Albedo lights cannot prevent mob spawns.
+lag-free, but that also means Mirage lights cannot prevent mob spawns.
 
 ## Usage
 
@@ -40,7 +40,7 @@ Finally, you can do something similar to this for any Entity or TileEntity:
 ```java
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="elucent.albedo.lighting.ILightProvider", modid="albedo")
+@Optional.Interface(iface="elucent.albedo.lighting.ILightProvider", modid="mirage")
 public class MyEntityOrTileEntity extends {Tile,}Entity implements ILightProvider {
 	
 	@Optional.Method(modid="albedo")
@@ -57,8 +57,8 @@ public class MyEntityOrTileEntity extends {Tile,}Entity implements ILightProvide
 
 ```
 
-The @Optionals let people use your mod without needing to install Albedo.
-Your mod will take advantage of Albedo when possible.
+The @Optionals let people use your mod without needing to install Mirage.
+Your mod will take advantage of Mirage when possible.
 
 If you need more control, listen for the `GatherLightsEvent` and add your own
 Light object to the list.
