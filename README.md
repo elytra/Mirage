@@ -4,7 +4,7 @@
 
 [>> Jenkins (Downloads) <<](https://ci.elytradev.com/job/elytra/job/Mirage/)
 
-* Neat rendering tricks with an API.*
+*Neat rendering tricks with an API.*
 
 Mirage is a library and coremod containing some neat rendering tricks for use in
 any mod. It started life as an update of Elucent's Albedo to 1.12 (best known for
