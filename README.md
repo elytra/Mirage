@@ -46,7 +46,7 @@ Finally, you can do something similar to this for any Entity or TileEntity:
 ```java
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="com.elytradev.mirage.lighting.ILightProvider", modid="mirage")
+@Optional.Interface(iface="com.elytradev.mirage.lighting.IColoredLight", modid="mirage")
 public class MyEntityOrTileEntity extends {Tile,}Entity implements IColoredLight {
 	
 	@Optional.Method(modid="mirage")
