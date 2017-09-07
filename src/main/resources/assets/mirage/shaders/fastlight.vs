@@ -27,7 +27,7 @@ uniform int maxLights;
 uniform float ticks;
 uniform int flickerMode;
 
-const float redScale   = 1.0f - 0.2126f;
+const float redScale   = 1.0f - 0.7152f;//0.2126f; //turns out red color sensitivity and red perceptual brightness are RATHER DIFFERENT
 const float greenScale = 1.0f - 0.7152f;
 const float blueScale  = 1.0f - 0.0722f;
 
