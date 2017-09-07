@@ -39,22 +39,10 @@ vec4 vanilla() {
 
 vec3 combinedLight() {
 	//Don't clamp; Intense large-area whites happen a lot in real scenarios
-	return vanillaLight() + (lcolor.xyz); //stacks vanilla on top of colored lights, close to physical behavior
-	//return mix(vanillaLight(), lcolor.xyz, intens); //old mixing, prioritizes colored lights over vanilla
+	return vanillaLight() + (lcolor.xyz);
 }
 
 void main() {
-	//vec4 light = vec4(combinedLight(),1);
-	//vec4 color = vanilla();
-	//if (light.x>0) { color.x *= light.x; } else { color.x = 0; }
-	//if (light.y>0) { color.y *= light.y; } else { color.y = 0; }
-	//if (light.z>0) { color.z *= light.z; } else { color.z = 0; }
-	//color = color * light;
-	//color = clamp(color, 0, 1);
-	
-	
 	vec4 color = clamp(vanilla() * vec4(combinedLight(),1), 0, 1);
-	//vec4 color = vec4(max(mix(baseColor.xyz*lightdark,baseColor.xyz*lcolor.xyz,intens),lightdark*baseColor.xyz),baseColor.w);
-	//vec4 color = baseColor;
 	gl_FragColor = color;
 }

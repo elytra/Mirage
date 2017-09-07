@@ -31,6 +31,8 @@ const float redScale   = 1.0f - 0.7152f;//0.2126f; //turns out red color sensiti
 const float greenScale = 1.0f - 0.7152f;
 const float blueScale  = 1.0f - 0.0722f;
 
+//const float falloff = 0.1f;
+
 void main() {
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
@@ -54,35 +56,32 @@ void main() {
 		float dist = distance(lights[i].position,position);
 		float radius = length(lights[i].coneDirection);
 		if (dist <= radius) {
+			float coneStrength = 1.0f;
 		
 			//Cone
 			vec3 coneVec  = normalize(lights[i].coneDirection);
 			vec3 incident = normalize(position - lights[i].position);
 			float angularDifference = dot(coneVec, incident);
-			if (angularDifference<lights[i].coneFalloff) continue;
-		
+			if (angularDifference<lights[i].coneFalloff) {
+				coneStrength = 1-clamp((lights[i].coneFalloff - angularDifference) * 2.15f, 0, 1);
+			}
+			
 			//Intensity
 			float falloff = clamp(1.0f - (dist/radius), 0.0f, 1.0f);
 			float intensity = falloff * lights[i].color.w * lights[i].intensity;
-			totalIntens += intensity;
+			totalIntens += intensity*coneStrength;
 			
 			//Color
-			sumR += intensity*lights[i].color.x;
-			sumG += intensity*lights[i].color.y;
-			sumB += intensity*lights[i].color.z;
+			sumR += lights[i].color.x;
+			sumG += lights[i].color.y;
+			sumB += lights[i].color.z;
 			
 		}
 	}
 	
-	//lcolor = vec4(max(sumR*2.0f,0.0f), max(sumG*1.0f,0.0f), max(sumB*1.0f,0.0f), 1.0f);
-	//intens = min(1.0f,maxIntens);
 	intens = totalIntens;
-	
-	/*
-	 * Perceptual brightness isn't the same across RGB, so we need to convert
-	 * backwards from intensity (luminance) to chroma so different-colored lights
-	 * will look about the same brightness. It's not perfect - it feels like you
-	 * can sun-tan in magenta light - but it does a pretty good job.
-	 */
-	lcolor = vec4(sumR*redScale, sumG*greenScale, sumB*blueScale, 1.0f);
+
+	float averageLuma = (sumR+sumG+sumB) / 3.0f;
+	float conv = clamp(abs(totalIntens) / abs(averageLuma), 0, 1); 
+	lcolor = vec4(sumR*conv, sumG*conv, sumB*conv, 1.0f);
 }

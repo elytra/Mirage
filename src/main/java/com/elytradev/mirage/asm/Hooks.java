@@ -24,8 +24,6 @@
 
 package com.elytradev.mirage.asm;
 
-import org.lwjgl.opengl.GL11;
-
 import com.elytradev.mirage.ConfigManager;
 import com.elytradev.mirage.EventManager;
 import com.elytradev.mirage.lighting.LightManager;

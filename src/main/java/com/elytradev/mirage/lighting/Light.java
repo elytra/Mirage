@@ -61,7 +61,7 @@ public class Light {
 		this.g = g;
 		this.b = b;
 		this.a = a;
-		this.l = 1.9f;
+		this.l = 1.0f;
 		this.sx = radius;
 		this.sy = 0;
 		this.sz = 0;
@@ -81,7 +81,7 @@ public class Light {
 		private float g = Float.NaN;
 		private float b = Float.NaN;
 		private float a = Float.NaN;
-		private float l = 1.9f;
+		private float l = 1.0f;
 		
 		private float radius = Float.NaN; //synthetic
 		
