@@ -53,7 +53,7 @@ public class Hooks {
 			LightManager.clear();
 			LightManager.update(Minecraft.getMinecraft().world);
 			LightManager.uploadLights();
-			
+			/*
 			Shaders.entityLightProgram.use();
 			
 			Shaders.entityLightProgram.getUniform("sampler").setInt(0);
@@ -64,7 +64,7 @@ public class Hooks {
 			
 			Shaders.entityLightProgram.getUniform("playerPos").setFloat((float)p.posX, (float)p.posY, (float)p.posZ);
 			Shaders.entityLightProgram.getUniform("lightingEnabled").setInt(GL11.glIsEnabled(GL11.GL_LIGHTING) ? 1 : 0);
-			
+			*/
 			Shaders.fastLightProgram.use();
 		}
 	}

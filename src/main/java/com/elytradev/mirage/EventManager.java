@@ -84,13 +84,14 @@ public class EventManager {
 				for (int j = 0; j < steps; j++) {
 					float theta = (i/(float)steps) * (float)(Math.PI*2);
 					float phi = (j/(float)steps) * (float)(Math.PI*2);
+					float radius = (float)Math.sqrt(l.sx*l.sx + l.sy*l.sy + l.sz*l.sz);
 					
-					double x = MathHelper.cos(theta) * MathHelper.sin(phi) * (l.radius/2);
-					double y = MathHelper.sin(theta) * MathHelper.sin(phi) * (l.radius/2);
-					double z = -MathHelper.cos(phi) * (l.radius/2);
+					double x = MathHelper.cos(theta) * MathHelper.sin(phi) * radius;
+					double y = MathHelper.sin(theta) * MathHelper.sin(phi) * radius;
+					double z = -MathHelper.cos(phi) * radius;
 					
 					vb.pos(l.x-interpX, l.y-interpY, l.z-interpZ).color(l.r, l.g, l.b, l.a*a).endVertex();
-					vb.pos((l.x+x)-interpX, (l.y+y)-interpY, (l.z+z)-interpZ).color(l.r, l.g, l.b, 0).endVertex();
+					vb.pos((l.x+x)-interpX, (l.y+y)-interpY, (l.z+z)-interpZ).color(l.r, l.g, l.b, 0.2f*a).endVertex();
 				}
 			}
 		}

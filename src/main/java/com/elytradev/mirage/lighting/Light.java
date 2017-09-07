@@ -29,6 +29,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class Light {
+	public static final float DOT_15 = 0.966f;
+	public static final float DOT_30 = 0.866f;
+	public static final float DOT_45 = 0.707f;
+	public static final float DOT_60 = 0.500f;
+	public static final float DOT_90 = 0.000f;
 	
 	public float x;
 	public float y;
@@ -38,8 +43,14 @@ public class Light {
 	public float g;
 	public float b;
 	public float a;
+	public float l;
 	
-	public float radius;
+	//cone vector and falloff
+	public float sx;
+	public float sy;
+	public float sz;
+	
+	public float sf;
 
 	@Deprecated
 	public Light(float x, float y, float z, float r, float g, float b, float a, float radius) {
@@ -50,7 +61,11 @@ public class Light {
 		this.g = g;
 		this.b = b;
 		this.a = a;
-		this.radius = radius;
+		this.l = 1.9f;
+		this.sx = radius;
+		this.sy = 0;
+		this.sz = 0;
+		this.sf = -1; //180 degrees
 	}
 	
 	public static Builder builder() {
@@ -66,9 +81,14 @@ public class Light {
 		private float g = Float.NaN;
 		private float b = Float.NaN;
 		private float a = Float.NaN;
+		private float l = 1.9f;
 		
-		private float radius = Float.NaN;
+		private float radius = Float.NaN; //synthetic
 		
+		private float sx = 1;
+		private float sy = 0;
+		private float sz = 0;
+		private float sf = -1;
 		
 		public Builder pos(BlockPos pos) {
 			return pos(pos.getX()+0.5f, pos.getY()+0.5f, pos.getZ()+0.5f);
@@ -93,7 +113,6 @@ public class Light {
 			return this;
 		}
 		
-		
 		public Builder color(int c, boolean hasAlpha) {
 			return color(extract(c, 2), extract(c, 1), extract(c, 0), hasAlpha ? extract(c, 3) : 1);
 		}
@@ -114,18 +133,52 @@ public class Light {
 			return this;
 		}
 		
-		
 		public Builder radius(float radius) {
 			this.radius = radius;
 			return this;
 		}
 		
+		/**
+		 * <p>Sets this light's shape to a cone, and sets its direction.
+		 * The direction vector will be normalized (magnitude is controlled with {@link #radius(float)}).
+		 * 
+		 * <p>Spread controls how broad the cone is, as the dot product of the cone vector with the incident vector. So
+		 * 1.0f will be infinitesimally small, 0.707f will be 45 degrees, 0 will be 90, -0.707f is 130, and -1 is 180
+		 * degrees (which behaves like a point light) - you can also use one of the DOT_X constants in Light.
+		 */
+		public Builder cone(float x, float y, float z, float spread) {
+			float magnitude = (float)Math.sqrt(x*x + y*y + z*z);
+			this.sx = x / magnitude;
+			this.sy = y / magnitude;
+			this.sz = z / magnitude;
+			this.sf = spread; //Math.min(spread, 1.0f); //Cap it so negative (>1/0f) cone widths don't make weird behavior
+			return this;
+		}
+		
+		/**
+		 * @see #cone(float, float, float, float)
+		 */
+		public Builder cone(Vec3d vec, float spread) {
+			cone((float)vec.x, (float)vec.y, (float)vec.z, spread);
+			return this;
+		}
+		
+		public Builder intensity(float l) {
+			this.l = l;
+			return this;
+		}
 		
 		public Light build() {
 			if (Float.isFinite(x) && Float.isFinite(y) && Float.isFinite(z) &&
 					Float.isFinite(r) && Float.isFinite(g) && Float.isFinite(b) && Float.isFinite(a) &&
 					Float.isFinite(radius)) {
-				return new Light(x, y, z, r, g, b, a, radius);
+				Light l = new Light(x, y, z, r, g, b, a, 1.0f);
+				l.sx = sx*radius;
+				l.sy = sy*radius;
+				l.sz = sz*radius;
+				l.sf = sf;
+				l.l = this.l;
+				return l;
 			} else {
 				throw new IllegalArgumentException("Position, color, and radius must be set, and cannot be infinite");
 			}

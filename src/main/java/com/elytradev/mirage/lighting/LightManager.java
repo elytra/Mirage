@@ -58,11 +58,15 @@ public class LightManager {
 		
 				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(l.x, l.y, l.z);
 				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(l.r, l.g, l.b, l.a);
-				Shaders.currentProgram.getUniform("lights["+i+"].radius").setFloat(l.radius);
+				Shaders.currentProgram.getUniform("lights["+i+"].coneDirection").setFloat(l.sx, l.sy, l.sz);
+				Shaders.currentProgram.getUniform("lights["+i+"].coneFalloff").setFloat(l.sf);
+				Shaders.currentProgram.getUniform("lights["+i+"].intensity").setFloat(l.l);
 			} else {
 				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(0, 0, 0);
 				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(0, 0, 0, 0);
-				Shaders.currentProgram.getUniform("lights["+i+"].radius").setFloat(0);
+				Shaders.currentProgram.getUniform("lights["+i+"].coneDirection").setFloat(0, 0, 0);
+				Shaders.currentProgram.getUniform("lights["+i+"].coneFalloff").setFloat(1.0f);
+				Shaders.currentProgram.getUniform("lights["+i+"].intensity").setFloat(1.0f);
 			}
 		}
 	}

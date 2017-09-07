@@ -9,7 +9,10 @@ varying float intens;
 struct Light {
     vec4 color;
     vec3 position;
-	float radius;
+    vec3 coneDirection; //Non-normalized! Used for radius as well
+    float coneFalloff;
+	//float radius;
+	float intensity;
 };
 
 uniform int chunkX;
@@ -24,56 +27,62 @@ uniform int maxLights;
 uniform float ticks;
 uniform int flickerMode;
 
-float rand2(vec2 co) {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-vec3 rand3(vec3 co) {
-    return vec3(rand2(co.xz)-0.5f,rand2(co.yx)-0.5f,rand2(co.zy)-0.5f);
-}
-
-float distSq(vec3 a, vec3 b) {
-	return pow((a.x-b.x),2)+pow((a.y-b.y),2)+pow((a.z-b.z),2);
-}
+const float redScale   = 1.0f - 0.2126f;
+const float greenScale = 1.0f - 0.7152f;
+const float blueScale  = 1.0f - 0.0722f;
 
 void main() {
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	normal = gl_Normal;
-	
 	position = gl_Vertex.xyz+vec3(chunkX,chunkY,chunkZ);
 	
 	float offset = 0;
 	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;
-	
 	gl_Position = gl_ModelViewProjectionMatrix * (gl_Vertex + vec4(0,offset,0,0));
-	
 	gl_FrontColor = gl_Color;
 	
-	lcolor = vec4(0,0,0,1.0f);
+	//lcolor = vec4(0,0,0,1.0f);
 	float sumR = 0;
 	float sumG = 0;
 	float sumB = 0;
-	float count = 0;
-	float maxIntens = 0;
+	//float count = 0;
 	float totalIntens = 0;
 	for (int i = 0; i < lightCount; i ++) {
-		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)){
-			float intensity = max(0,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
+		float dist = distance(lights[i].position,position);
+		float radius = length(lights[i].coneDirection);
+		if (dist <= radius) {
+		
+			//Cone
+			vec3 coneVec  = normalize(lights[i].coneDirection);
+			vec3 incident = normalize(position - lights[i].position);
+			float angularDifference = dot(coneVec, incident);
+			if (angularDifference<lights[i].coneFalloff) continue;
+		
+			//Intensity
+			float falloff = clamp(1.0f - (dist/radius), 0.0f, 1.0f);
+			float intensity = falloff * lights[i].color.w * lights[i].intensity;
 			totalIntens += intensity;
-			maxIntens = max(maxIntens,intensity);
+			
+			//Color
+			sumR += intensity*lights[i].color.x;
+			sumG += intensity*lights[i].color.y;
+			sumB += intensity*lights[i].color.z;
+			
 		}
 	}
-	for (int i = 0; i < lightCount; i ++) {
-		if (distSq(lights[i].position,position) <= pow(lights[i].radius,2)) {
-			float intensity = max(0.0f,1.0f-distance(lights[i].position,position)/(lights[i].radius)) * 1.0f * lights[i].color.w;
-			sumR += (intensity/totalIntens)*lights[i].color.x;
-			sumG += (intensity/totalIntens)*lights[i].color.y;
-			sumB += (intensity/totalIntens)*lights[i].color.z;
-		}
-	}
-	lcolor = vec4(max(sumR*1.5f,0.0f), max(sumG*1.5f,0.0f), max(sumB*1.5f,0.0f), 1.0f);
-	intens = min(1.0f,maxIntens);
+	
+	//lcolor = vec4(max(sumR*2.0f,0.0f), max(sumG*1.0f,0.0f), max(sumB*1.0f,0.0f), 1.0f);
+	//intens = min(1.0f,maxIntens);
+	intens = totalIntens;
+	
+	/*
+	 * Perceptual brightness isn't the same across RGB, so we need to convert
+	 * backwards from intensity (luminance) to chroma so different-colored lights
+	 * will look about the same brightness. It's not perfect - it feels like you
+	 * can sun-tan in magenta light - but it does a pretty good job.
+	 */
+	lcolor = vec4(sumR*redScale, sumG*greenScale, sumB*blueScale, 1.0f);
 }

@@ -109,7 +109,7 @@ public class ShaderProgram {
 
 	private int program;
 	
-	private final Map<String, Uniform> uniforms = Maps.newHashMap();
+	private final Map<String, Uniform> uniforms = Maps.newConcurrentMap();
 	
 	public ShaderProgram(int program) {
 		this.program = program;
