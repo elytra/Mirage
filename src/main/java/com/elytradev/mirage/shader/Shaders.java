@@ -55,6 +55,9 @@ public class Shaders {
 		}
 		fastLightProgram = new ShaderProgram(loadProgram(irm, "shaders/fastlight.vs", "shaders/fastlight.fs"));
 		LogManager.getLogger("Mirage").info("Loaded fastlight shader");
+		fastLightProgram.use();
+		fastLightProgram.refreshUniforms();
+		ShaderProgram.NONE.use();
 		entityLightProgram = new ShaderProgram(loadProgram(irm, "shaders/entitylight.vs", "shaders/entitylight.fs"));
 		LogManager.getLogger("Mirage").info("Loaded entitylight shader");
 	}

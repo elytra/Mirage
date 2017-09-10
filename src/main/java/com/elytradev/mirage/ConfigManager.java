@@ -36,6 +36,7 @@ public class ConfigManager {
 
 	// LIGHTING
 	public static int maxLights;
+	public static int frameSkip;
 	public static boolean enableLights;
 
 	public static void init(File configFile) {
@@ -53,7 +54,8 @@ public class ConfigManager {
 				"The maximum number of lights allowed to render in a scene. Lights are sorted nearest-first, so further-away lights will be culled after nearer lights.");
 		enableLights = config.getBoolean("enableLights", "light", true,
 				"Enables lighting in general.");
-
+		frameSkip = config.getInt("frameSkip", "light", 10, 0, 160, "Skips sending light updates to the card some frames. This can speed up fps greatly when bandwidth is a problem. 0 always sends data.");
+		
 		if (config.hasChanged()) {
 			config.save();
 		}

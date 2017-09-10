@@ -43,6 +43,7 @@ import com.elytradev.mirage.shader.Shaders;
 
 public class LightManager {
 	public static final ArrayList<Light> lights = Lists.newArrayList();
+	private static long frameId = 0;
 	
 	public static void addLight(Light l) {
 		if (l != null) {
@@ -52,22 +53,18 @@ public class LightManager {
 	
 	public static void uploadLights() {
 		Shaders.currentProgram.getUniform("lightCount").setInt(lights.size());
-		for (int i = 0; i < Math.min(ConfigManager.maxLights, lights.size()); i++) {
-			if (i < lights.size()) {
-				Light l = lights.get(i);
 		
+		frameId++;
+		if (frameId<ConfigManager.frameSkip+1) return;
+		frameId = 0;
+
+		for (int i = 0; i < Math.min(ConfigManager.maxLights, lights.size()); i++) {
+				Light l = lights.get(i);
 				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(l.x, l.y, l.z);
 				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(l.r, l.g, l.b, l.a);
 				Shaders.currentProgram.getUniform("lights["+i+"].coneDirection").setFloat(l.sx, l.sy, l.sz);
 				Shaders.currentProgram.getUniform("lights["+i+"].coneFalloff").setFloat(l.sf);
 				Shaders.currentProgram.getUniform("lights["+i+"].intensity").setFloat(l.l);
-			} else {
-				Shaders.currentProgram.getUniform("lights["+i+"].position").setFloat(0, 0, 0);
-				Shaders.currentProgram.getUniform("lights["+i+"].color").setFloat(0, 0, 0, 0);
-				Shaders.currentProgram.getUniform("lights["+i+"].coneDirection").setFloat(0, 0, 0);
-				Shaders.currentProgram.getUniform("lights["+i+"].coneFalloff").setFloat(1.0f);
-				Shaders.currentProgram.getUniform("lights["+i+"].intensity").setFloat(1.0f);
-			}
 		}
 	}
 	

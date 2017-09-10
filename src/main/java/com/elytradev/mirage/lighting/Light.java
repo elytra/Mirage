@@ -24,6 +24,8 @@
 
 package com.elytradev.mirage.lighting;
 
+import java.nio.FloatBuffer;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -66,6 +68,46 @@ public class Light {
 		this.sy = 0;
 		this.sz = 0;
 		this.sf = -1; //180 degrees
+	}
+	
+	/*
+	 *  struct light {
+	 *  	vec4 color
+	 *  	vec3 position
+	 *  	vec3 coneDirection
+	 *  	float coneFalloff
+	 *  	float intensity
+	 *  }
+	 */
+	
+	public void writeTo(float[] buf, int ofs) {
+		buf[ofs+ 0] = r;
+		buf[ofs+ 1] = g;
+		buf[ofs+ 2] = b;
+		buf[ofs+ 3] = a;
+		buf[ofs+ 4] = x;
+		buf[ofs+ 5] = y;
+		buf[ofs+ 6] = z;
+		buf[ofs+ 7] = sx;
+		buf[ofs+ 8] = sy;
+		buf[ofs+ 9] = sz;
+		buf[ofs+10] = sf;
+		buf[ofs+11] = l;
+	}
+	
+	public void writeTo(FloatBuffer buf) {
+		buf.put(r);
+		buf.put(g);
+		buf.put(b);
+		buf.put(a);
+		buf.put(x);
+		buf.put(y);
+		buf.put(z);
+		buf.put(sx);
+		buf.put(sy);
+		buf.put(sz);
+		buf.put(sf);
+		buf.put(l);
 	}
 	
 	public static Builder builder() {
@@ -183,7 +225,6 @@ public class Light {
 				throw new IllegalArgumentException("Position, color, and radius must be set, and cannot be infinite");
 			}
 		}
-		
 	}
 	
 }

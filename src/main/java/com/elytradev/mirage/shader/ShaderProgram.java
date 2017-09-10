@@ -24,10 +24,16 @@
 
 package com.elytradev.mirage.shader;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL31;
+import org.lwjgl.opengl.GLContext;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -104,7 +110,11 @@ public class ShaderProgram {
 			GL20.glUniform4i(location, val1, val2, val3, val4);
 			lastValue = val;
 		}
-		
+		public void setFloats(float[] floats) {
+			FloatBuffer values = ByteBuffer.allocateDirect(floats.length*Float.BYTES).order(ByteOrder.nativeOrder()).asFloatBuffer();
+			values.put(floats);
+			GL20.glUniform1(location, values);
+		}
 	}
 
 	private int program;
@@ -115,9 +125,31 @@ public class ShaderProgram {
 		this.program = program;
 	}
 	
+	public void refreshUniforms() {
+		if (GLContext.getCapabilities().OpenGL31) {
+			int numUniforms = GL20.glGetProgrami(program, GL20.GL_ACTIVE_UNIFORMS);
+			for(int i=0; i<numUniforms; i++) {
+				String name = GL31.glGetActiveUniformName(program, i,32);
+				int type = GL20.glGetActiveUniformType(program, i);
+				int size = GL20.glGetActiveUniformSize(program, i);
+				int idx = GL20.glGetUniformLocation(program, name);
+				//System.out.println(i+": Discovered uniform '"+name+"' at index "+idx+" of type "+typeString(type)+" and size "+size);
+				uniforms.put(name, new Uniform(idx,null));
+			}
+			
+		} else {
+			System.out.println("Can't query and pre-register uniform names; GL context is <3.1");
+		}
+	}
+	
 	public Uniform getUniform(String name) {
 		if (!uniforms.containsKey(name)) {
-			uniforms.put(name, new Uniform(GL20.glGetUniformLocation(program, name), null));
+			int loc = GL20.glGetUniformLocation(program, name);
+			if (loc==GL11.GL_FALSE) {
+				System.out.println("INVALID UNIFORM NAME:"+name);
+			}
+			
+			uniforms.put(name, new Uniform(loc, null));
 		}
 		return uniforms.get(name);
 	}
@@ -137,6 +169,16 @@ public class ShaderProgram {
 
 	public boolean isCurrentProgram() {
 		return Shaders.currentProgram == this;
+	}
+	
+	public static String typeString(int type) {
+		switch(type) {
+		case GL20.GL_FLOAT_VEC3: return "vec3";
+		case GL20.GL_FLOAT_VEC4: return "vec4";
+		case GL11.GL_FLOAT: return "float";
+		default:
+			return "Unknown("+type+")";
+		}
 	}
 	
 }
