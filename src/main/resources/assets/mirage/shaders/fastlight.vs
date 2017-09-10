@@ -27,9 +27,10 @@ uniform int maxLights;
 uniform float ticks;
 uniform int flickerMode;
 
-const float redScale   = 1.0f - 0.7152f;//0.2126f; //turns out red color sensitivity and red perceptual brightness are RATHER DIFFERENT
+const float redScale   = 1.0f - 0.2126f;
 const float greenScale = 1.0f - 0.7152f;
 const float blueScale  = 1.0f - 0.0722f;
+const vec3 lumaFunction = vec3(0.2126f, 0.7152f, 0.0722f);
 
 //const float falloff = 0.1f;
 
@@ -53,8 +54,9 @@ void main() {
 	//float count = 0;
 	float totalIntens = 0;
 	for (int i = 0; i < lightCount; i ++) {
-		float dist = distance(lights[i].position,position);
+		float dist = distance(lights[i].position, position);
 		float radius = length(lights[i].coneDirection);
+		
 		if (dist <= radius) {
 			float coneStrength = 1.0f;
 		
@@ -67,21 +69,23 @@ void main() {
 			}
 			
 			//Intensity
-			float falloff = clamp(1.0f - (dist/radius), 0.0f, 1.0f);
+			float falloff = 1-clamp(dist/radius, 0.0f, 1.0f);
 			float intensity = falloff * lights[i].color.w * lights[i].intensity;
 			totalIntens += intensity*coneStrength;
 			
 			//Color
-			sumR += lights[i].color.x;
-			sumG += lights[i].color.y;
-			sumB += lights[i].color.z;
-			
+			vec3 normalLight = normalize(lights[i].color.xyz);
+			sumR += normalLight.x;
+			sumG += normalLight.y;
+			sumB += normalLight.z;
 		}
 	}
 	
+	//float colorIntensity = clamp(length(lumaFunction*vec3(sumR,sumG,sumB)), 0.1f, 1.5f);
 	intens = totalIntens;
 
-	float averageLuma = (sumR+sumG+sumB) / 3.0f;
-	float conv = clamp(abs(totalIntens) / abs(averageLuma), 0, 1); 
-	lcolor = vec4(sumR*conv, sumG*conv, sumB*conv, 1.0f);
+	//float averageLuma = ((sumR*redScale)+(sumG*greenScale)+(sumB*blueScale)) / 3.0f;
+	//intens /= (averageLuma*0.2f);
+	//float conv = clamp(abs(totalIntens) / abs(averageLuma), 0, 1); 
+	lcolor = vec4(sumR, sumG, sumB, 1.0f);
 }

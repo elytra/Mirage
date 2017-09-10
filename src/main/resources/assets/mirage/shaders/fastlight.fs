@@ -39,7 +39,9 @@ vec4 vanilla() {
 
 vec3 combinedLight() {
 	//Don't clamp; Intense large-area whites happen a lot in real scenarios
-	return vanillaLight() + (lcolor.xyz);
+	return vanillaLight() + normalize(lcolor.xyz)*intens;
+	//return normalize(lcolor.xyz)*intens;
+	//return vec3(1,1,1)*intens;
 }
 
 void main() {
