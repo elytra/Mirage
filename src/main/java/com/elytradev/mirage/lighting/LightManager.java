@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -76,13 +77,8 @@ public class LightManager {
 		MinecraftForge.EVENT_BUS.post(event);
 		
 		for (Entity e : world.getLoadedEntityList()) {
-			if (e instanceof IColoredLight){
-				Light l = ((IColoredLight)e).getColoredLight();
-				if (l!=null) addLight(l);
-			}
-			
-			for(ItemStack itemStack : e.getHeldEquipment()) {
-				Item item = itemStack.getItem();
+			if (e instanceof EntityItem) {
+				Item item = ((EntityItem) e).getItem().getItem();
 				if (item instanceof IColoredLight) {
 					Light l = ((IColoredLight)item).getColoredLight();
 					if (l!=null) {
@@ -92,16 +88,34 @@ public class LightManager {
 						addLight(l);
 					}
 				}
-			}
-			for(ItemStack itemStack : e.getArmorInventoryList()) {
-				Item item = itemStack.getItem();
-				if (item instanceof IColoredLight) {
-					Light l = ((IColoredLight)item).getColoredLight();
-					if (l!=null) {
-						l.x = (float) e.posX;
-						l.y = (float) e.posY;
-						l.z = (float) e.posZ;
-						addLight(l);
+			} else {
+				if (e instanceof IColoredLight){
+					Light l = ((IColoredLight)e).getColoredLight();
+					if (l!=null) addLight(l);
+				}
+				
+				for(ItemStack itemStack : e.getHeldEquipment()) {
+					Item item = itemStack.getItem();
+					if (item instanceof IColoredLight) {
+						Light l = ((IColoredLight)item).getColoredLight();
+						if (l!=null) {
+							l.x = (float) e.posX;
+							l.y = (float) e.posY;
+							l.z = (float) e.posZ;
+							addLight(l);
+						}
+					}
+				}
+				for(ItemStack itemStack : e.getArmorInventoryList()) {
+					Item item = itemStack.getItem();
+					if (item instanceof IColoredLight) {
+						Light l = ((IColoredLight)item).getColoredLight();
+						if (l!=null) {
+							l.x = (float) e.posX;
+							l.y = (float) e.posY;
+							l.z = (float) e.posZ;
+							addLight(l);
+						}
 					}
 				}
 			}

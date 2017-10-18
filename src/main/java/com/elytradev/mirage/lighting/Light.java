@@ -115,14 +115,14 @@ public class Light {
 	}
 	
 	public static final class Builder {
-		private float x = Float.NaN;
-		private float y = Float.NaN;
-		private float z = Float.NaN;
+		private float x = 0;
+		private float y = 0;
+		private float z = 0;
 		
-		private float r = Float.NaN;
-		private float g = Float.NaN;
-		private float b = Float.NaN;
-		private float a = Float.NaN;
+		private float r = 1;
+		private float g = 1;
+		private float b = 1;
+		private float a = 1;
 		private float l = 1.0f;
 		
 		private float radius = Float.NaN; //synthetic
@@ -211,9 +211,7 @@ public class Light {
 		}
 		
 		public Light build() {
-			if (Float.isFinite(x) && Float.isFinite(y) && Float.isFinite(z) &&
-					Float.isFinite(r) && Float.isFinite(g) && Float.isFinite(b) && Float.isFinite(a) &&
-					Float.isFinite(radius)) {
+			if (Float.isFinite(radius)) {
 				Light l = new Light(x, y, z, r, g, b, a, 1.0f);
 				l.sx = sx*radius;
 				l.sy = sy*radius;
@@ -222,7 +220,7 @@ public class Light {
 				l.l = this.l;
 				return l;
 			} else {
-				throw new IllegalArgumentException("Position, color, and radius must be set, and cannot be infinite");
+				throw new IllegalArgumentException("Radius must be set, and cannot be infinite");
 			}
 		}
 	}
