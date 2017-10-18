@@ -22,7 +22,7 @@ First off, add the Elytra Maven to your build.gradle:
 ```gradle
 repositories {
 	maven {
-		url 'https://repo.elytradev.com/'
+		url = 'https://repo.elytradev.com/'
 	}
 }
 ```
@@ -30,7 +30,7 @@ repositories {
 Then, add this to your `dependencies` block:
 
 ```gradle
-compile 'com.elytradev:mirage:2.0.1-SNAPSHOT'
+compile 'com.elytradev:mirage:2.0.3-rc1-SNAPSHOT'
 ```
 
 Switch to the 1.11.2 branch for 1.11.2 instructions, which are for Albedo
@@ -67,4 +67,4 @@ The @Optionals let people use your mod without needing to install Mirage.
 Your mod will take advantage of Mirage when possible.
 
 If you need more control, listen for the `GatherLightsEvent` and add your own
-Light object to the list.
+Light object.
