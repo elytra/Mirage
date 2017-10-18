@@ -37,8 +37,15 @@ public class GatherLightsEvent extends Event {
 		this.lights = lights;
 	}
 
+	/** @deprecated use {@link #add(Light)} instead */
+	@Deprecated
 	public ArrayList<Light> getLightList() {
 		return lights;
+	}
+	
+	/** Adds a light to render on this frame. Lights must be re-added each frame you wish to render them on. */
+	public void add(Light l) {
+		lights.add(l);
 	}
 
 	@Override

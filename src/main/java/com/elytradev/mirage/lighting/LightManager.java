@@ -31,7 +31,10 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,7 +77,33 @@ public class LightManager {
 		
 		for (Entity e : world.getLoadedEntityList()) {
 			if (e instanceof IColoredLight){
-				addLight(((IColoredLight)e).getColoredLight());
+				Light l = ((IColoredLight)e).getColoredLight();
+				if (l!=null) addLight(l);
+			}
+			
+			for(ItemStack itemStack : e.getHeldEquipment()) {
+				Item item = itemStack.getItem();
+				if (item instanceof IColoredLight) {
+					Light l = ((IColoredLight)item).getColoredLight();
+					if (l!=null) {
+						l.x = (float) e.posX;
+						l.y = (float) e.posY;
+						l.z = (float) e.posZ;
+						addLight(l);
+					}
+				}
+			}
+			for(ItemStack itemStack : e.getArmorInventoryList()) {
+				Item item = itemStack.getItem();
+				if (item instanceof IColoredLight) {
+					Light l = ((IColoredLight)item).getColoredLight();
+					if (l!=null) {
+						l.x = (float) e.posX;
+						l.y = (float) e.posY;
+						l.z = (float) e.posZ;
+						addLight(l);
+					}
+				}
 			}
 		}
 		for (TileEntity t : world.loadedTileEntityList) {
