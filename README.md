@@ -30,7 +30,7 @@ repositories {
 Then, add this to your `dependencies` block:
 
 ```gradle
-compile 'com.elytradev:mirage:2.0.3-rc1-SNAPSHOT'
+compile 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
 ```
 
 Switch to the 1.11.2 branch for 1.11.2 instructions, which are for Albedo
@@ -41,22 +41,44 @@ post-fork instead of Mirage. You may also want to try just using
 Gradle. Older versions of Gradle include a broken Apache HttpClient that doesn't
 support our HTTPS certificate.
 
-Finally, you can do something similar to this for any Entity or TileEntity:
+Finally, you can do something similar to this for any TileEntity:
 
 ```java
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="com.elytradev.mirage.lighting.IColoredLight", modid="mirage")
-public class MyEntityOrTileEntity extends {Tile,}Entity implements IColoredLight {
+@Optional.Interface(iface="com.elytradev.mirage.lighting.ILightEventConsumer", modid="mirage")
+public class MyTileEntity extends TileEntity implements ILightEventConsumer {
 	
 	@Optional.Method(modid="mirage")
 	@Override
-	public Light getColoredLight() {
-		return Light.builder()
+	public void gatherLights(GatherLightsEvent evt) {
+		evt.add( Light.builder()
 				.pos(/* ... */)
 				.color(1, 1, 1)
 				.radius(2)
-				.build();
+				.build());
+	}
+	
+}
+
+```
+
+Or this for any Item or Entity:
+
+```java
+import net.minecraftforge.fml.common.Optional;
+
+@Optional.Interface(iface="com.elytradev.mirage.lighting.IEntityLightEventConsumer", modid="mirage")
+public class MyItem extends Item implements IEntityLightEventConsumer {
+	
+	@Optional.Method(modid="mirage")
+	@Override
+	public void gatherLights(GatherLightsEvent evt, Entity e) {
+		evt.add( Light.builder()
+				.pos(/* ... */)
+				.color(1, 1, 1)
+				.radius(2)
+				.build());
 	}
 	
 }
