@@ -37,7 +37,9 @@ public class GatherLightsEvent extends Event {
 		this.lights = lights;
 	}
 
-	/** @deprecated use {@link #add(Light)} instead */
+	/** @deprecated use {@link #add(Light)} instead. This method will be maintained through the end of Minecraft 1.12,
+	 *              but *will* be removed for 1.13.
+	 */
 	@Deprecated
 	public ArrayList<Light> getLightList() {
 		return lights;

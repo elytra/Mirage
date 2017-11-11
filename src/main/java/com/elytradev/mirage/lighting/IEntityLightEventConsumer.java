@@ -24,20 +24,36 @@
 
 package com.elytradev.mirage.lighting;
 
-import javax.annotation.Nullable;
+import com.elytradev.mirage.event.GatherLightsEvent;
 
+import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * @deprecated {@link ILightEventConsumer} and {@link IEntityLightEventConsumer} offer simple ways to provide one light
- *             while *also* enabling multiple lights per provider and fixing some structural limitations for inventory
- *             and entity lights. IColoredLight will be maintained at least through the rest of 1.12, but it may be
- *             removed in a future Minecraft version.
+ * Identifies entities or items which provide dynamic light. Implement this on any Entity or any Item, and gatherLights
+ * will be called each frame for each one in the world, in an equipment slot, or in a hand, allowing you to add lights
+ * to the render for that frame.
+ * 
+ * <p>Classes that can be tagged with this interface:
+ * <ul>
+ *   <li>Item
+ *   <ul>
+ *     <li>Lit when worn in an equipment slot
+ *     <li>Lit when held in either hand
+ *     <li>Lit when dropped on the ground
+ *     <li><em>NOT</em> lit when in a Bauble slot.
+ *   </ul>
+ *   <li>Entity
+ *   <ul>
+ *     <li>Lit anywhere unless captured in a golden lasso, soul vial, or other non-entity form.
+ *     <li>Stays lit while riding or being ridden by other entities.
+ *   </ul>
+ * </ul>
+ * 
+ * <p>
  */
-@Deprecated
-public interface IColoredLight {
+public interface IEntityLightEventConsumer {
 	@SideOnly(Side.CLIENT)
-	@Nullable
-	public Light getColoredLight();
+	public void gatherLights(GatherLightsEvent evt, Entity entity);
 }

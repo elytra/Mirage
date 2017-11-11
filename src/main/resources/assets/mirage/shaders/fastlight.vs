@@ -74,7 +74,8 @@ void main() {
 			totalIntens += intensity*coneStrength;
 			
 			//Color
-			vec3 normalLight = normalize(lights[i].color.xyz);
+			//vec3 normalLight = normalize(lights[i].color.xyz);
+			vec3 normalLight = lights[i].color.xyz;
 			sumR += normalLight.x;
 			sumG += normalLight.y;
 			sumB += normalLight.z;

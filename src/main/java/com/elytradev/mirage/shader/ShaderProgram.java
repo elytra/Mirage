@@ -126,6 +126,10 @@ public class ShaderProgram {
 	}
 	
 	public void refreshUniforms() {
+		int maxVUniforms = GL11.glGetInteger(GL20.GL_MAX_VERTEX_UNIFORM_COMPONENTS);
+		int maxFUniforms = GL11.glGetInteger(GL20.GL_MAX_FRAGMENT_UNIFORM_COMPONENTS);
+		System.out.println("#### Maximum Uniforms V:"+maxVUniforms+" F:"+maxFUniforms);
+		System.out.println("#### Requested Components V:"+25+(12*10));
 		if (GLContext.getCapabilities().OpenGL31) {
 			int numUniforms = GL20.glGetProgrami(program, GL20.GL_ACTIVE_UNIFORMS);
 			for(int i=0; i<numUniforms; i++) {
@@ -145,11 +149,11 @@ public class ShaderProgram {
 	public Uniform getUniform(String name) {
 		if (!uniforms.containsKey(name)) {
 			int loc = GL20.glGetUniformLocation(program, name);
-			if (loc==GL11.GL_FALSE) {
+			if (loc==-1) {
 				System.out.println("INVALID UNIFORM NAME:"+name);
-			}
-			
-			uniforms.put(name, new Uniform(loc, null));
+			}// else {
+				uniforms.put(name, new Uniform(loc, null));
+			//}
 		}
 		return uniforms.get(name);
 	}

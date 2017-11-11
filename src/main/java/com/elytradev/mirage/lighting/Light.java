@@ -48,6 +48,7 @@ public class Light {
 	public float l;
 	
 	//cone vector and falloff
+	public float mag = 1.0f; //Used to prevent precision loss when repeatedly reorienting.
 	public float sx;
 	public float sy;
 	public float sz;
@@ -108,6 +109,35 @@ public class Light {
 		buf.put(sz);
 		buf.put(sf);
 		buf.put(l);
+	}
+	
+	/**
+	 * Moves this Light to the center of the block indicated by the specified BlockPos
+	 */
+	public void moveTo(BlockPos pos) {
+		x = pos.getX()+0.5f;
+		y = pos.getY()+0.5f;
+		z = pos.getZ()+0.5f;
+	}
+	
+	/**
+	 * Moves this Light to the eye position of the entity, but leaves its direction unchanged
+	 */
+	public void moveTo(Entity entity) {
+		x = (float)entity.posX;
+		y = (float)entity.posY + entity.getEyeHeight();
+		z = (float)entity.posZ;
+	}
+	
+	/**
+	 * Moves this Light to the eye position of the entity and points its cone in the direction the entity is looking
+	 */
+	public void moveAndOrientTo(Entity entity) {
+		moveTo(entity);
+		Vec3d vec = entity.getLookVec();
+		sx = (float)vec.x * mag;
+		sy = (float)vec.y * mag;
+		sz = (float)vec.z * mag;
 	}
 	
 	public static Builder builder() {
@@ -216,6 +246,7 @@ public class Light {
 				l.sx = sx*radius;
 				l.sy = sy*radius;
 				l.sz = sz*radius;
+				l.mag = radius;
 				l.sf = sf;
 				l.l = this.l;
 				return l;

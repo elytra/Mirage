@@ -31,7 +31,6 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -72,6 +71,7 @@ public class LightManager {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static void update(World world) {
 		GatherLightsEvent event = new GatherLightsEvent(lights);
 		MinecraftForge.EVENT_BUS.post(event);
@@ -79,7 +79,9 @@ public class LightManager {
 		for (Entity e : world.getLoadedEntityList()) {
 			if (e instanceof EntityItem) {
 				Item item = ((EntityItem) e).getItem().getItem();
-				if (item instanceof IColoredLight) {
+				if (item instanceof IEntityLightEventConsumer) {
+					((IEntityLightEventConsumer)item).gatherLights(event, e);
+				} else if (item instanceof IColoredLight) {
 					Light l = ((IColoredLight)item).getColoredLight();
 					if (l!=null) {
 						l.x = (float) e.posX;
@@ -89,14 +91,18 @@ public class LightManager {
 					}
 				}
 			} else {
-				if (e instanceof IColoredLight){
+				if (e instanceof IEntityLightEventConsumer) {
+					((IEntityLightEventConsumer)e).gatherLights(event, e);
+				} else if (e instanceof IColoredLight){
 					Light l = ((IColoredLight)e).getColoredLight();
 					if (l!=null) addLight(l);
 				}
 				
 				for(ItemStack itemStack : e.getHeldEquipment()) {
 					Item item = itemStack.getItem();
-					if (item instanceof IColoredLight) {
+					if (item instanceof IEntityLightEventConsumer) {
+						((IEntityLightEventConsumer)item).gatherLights(event, e);
+					} else if (item instanceof IColoredLight) {
 						Light l = ((IColoredLight)item).getColoredLight();
 						if (l!=null) {
 							l.x = (float) e.posX;
@@ -108,7 +114,9 @@ public class LightManager {
 				}
 				for(ItemStack itemStack : e.getArmorInventoryList()) {
 					Item item = itemStack.getItem();
-					if (item instanceof IColoredLight) {
+					if (item instanceof IEntityLightEventConsumer) {
+						((IEntityLightEventConsumer)item).gatherLights(event, e);
+					} else if (item instanceof IColoredLight) {
 						Light l = ((IColoredLight)item).getColoredLight();
 						if (l!=null) {
 							l.x = (float) e.posX;
@@ -121,7 +129,9 @@ public class LightManager {
 			}
 		}
 		for (TileEntity t : world.loadedTileEntityList) {
-			if (t instanceof IColoredLight) {
+			if (t instanceof ILightEventConsumer) {
+				((ILightEventConsumer)t).gatherLights(event);
+			} else if (t instanceof IColoredLight) {
 				addLight(((IColoredLight)t).getColoredLight());
 			}
 		}

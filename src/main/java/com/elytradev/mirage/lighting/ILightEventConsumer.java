@@ -24,20 +24,29 @@
 
 package com.elytradev.mirage.lighting;
 
-import javax.annotation.Nullable;
+import com.elytradev.mirage.event.GatherLightsEvent;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * @deprecated {@link ILightEventConsumer} and {@link IEntityLightEventConsumer} offer simple ways to provide one light
- *             while *also* enabling multiple lights per provider and fixing some structural limitations for inventory
- *             and entity lights. IColoredLight will be maintained at least through the rest of 1.12, but it may be
- *             removed in a future Minecraft version.
+ * Identifies tiles which provide dynamic light. Implement this on your TileEntity, and gatherLights will be called each
+ * frame for each block that has that tile, allowing you to add lights to the render for that frame.
+ * 
+ * <p>Classes that can be tagged with this interface:
+ * <ul>
+ *   <li>TileEntity
+ *   <ul>
+ *     <li>Lit when in placed in-world.
+ *   </ul>
+ * </ul>
  */
-@Deprecated
-public interface IColoredLight {
+public interface ILightEventConsumer {
+	/**
+	 * Called to allow clients to provide zero or more colored lights. Lights must be added every frame, but the
+	 * lighting system does not make any changes to your light; the same light can be safely added every frame.
+	 * @param evt An object which can accept lights for display.
+	 */
 	@SideOnly(Side.CLIENT)
-	@Nullable
-	public Light getColoredLight();
+	public void gatherLights(GatherLightsEvent evt);
 }

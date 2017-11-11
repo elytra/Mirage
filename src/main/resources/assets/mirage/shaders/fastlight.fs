@@ -14,6 +14,21 @@ uniform sampler2D lightmap;
 uniform vec3 playerPos;
 
 /*
+ * Utility methods that should be part of openGL but are inconsistent across platforms
+ */
+
+float len(vec3 vec) {
+	return sqrt((vec.x*vec.x) + (vec.y*vec.y) + (vec.z*vec.z));
+}
+
+vec3 norm(vec3 vec) {
+	float length = len(vec);
+	if (length==0) return vec3(0,0,0);
+	return vec3(vec.x/length, vec.y/length, vec.z/length);
+}
+
+
+/*
  * Gets the fog color and intensity at the current location
  */
 vec4 vanillaFog() {
@@ -34,14 +49,15 @@ vec4 vanilla() {
 	baseColor = vec4(mix(baseColor.xyz, fog.xyz, fog.w), baseColor.w);
 	
 	return baseColor;
-	//return baseColor * vec4(vanillaLight(), 1.0f);
 }
 
 vec3 combinedLight() {
 	//Don't clamp; Intense large-area whites happen a lot in real scenarios
-	return vanillaLight() + normalize(lcolor.xyz)*intens;
-	//return normalize(lcolor.xyz)*intens;
-	//return vec3(1,1,1)*intens;
+	//if (lcolor.xyz.length()>0) {
+		return vanillaLight() + (norm(lcolor.xyz)*intens);
+	//} else {
+	//	return vanillaLight();
+	//}
 }
 
 void main() {
