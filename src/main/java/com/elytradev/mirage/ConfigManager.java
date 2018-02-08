@@ -38,6 +38,7 @@ public class ConfigManager {
 	public static int maxLights;
 	public static int frameSkip;
 	public static boolean enableLights;
+	public static double maxDist;
 
 	public static void init(File configFile) {
 		if (config == null) {
@@ -52,6 +53,8 @@ public class ConfigManager {
 
 		maxLights = config.getInt("maxLights", "light", 10, 0, 100,
 				"The maximum number of lights allowed to render in a scene. Lights are sorted nearest-first, so further-away lights will be culled after nearer lights.");
+		maxDist = config.getFloat("maxDistance", "light", 32, 1, Float.MAX_VALUE,
+				"The maximum distance lights are allowed to render at, from the player.");
 		enableLights = config.getBoolean("enableLights", "light", true,
 				"Enables lighting in general.");
 		frameSkip = config.getInt("frameSkip", "light", 10, 0, 160, "Skips sending light updates to the card some frames. This can speed up fps greatly when bandwidth is a problem. 0 always sends data.");
