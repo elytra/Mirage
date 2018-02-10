@@ -54,9 +54,8 @@ public class Mirage {
 			Loader.instance().activeModContainer().setEnabledState(false);
 			return;
 		}
-		((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener((irm) -> {
-			Shaders.reload(irm);
-		});
+
+		((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(Shaders::reload);
 		
 		MinecraftForge.EVENT_BUS.register(new EventManager());
 		MinecraftForge.EVENT_BUS.register(new ConfigManager());

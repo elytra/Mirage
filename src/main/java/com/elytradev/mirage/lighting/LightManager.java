@@ -30,13 +30,21 @@ import java.util.Comparator;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ChunkProviderClient;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.elytradev.mirage.ConfigManager;
@@ -46,9 +54,26 @@ import com.elytradev.mirage.shader.Shaders;
 
 public class LightManager {
 	public static final ArrayList<Light> lights = Lists.newArrayList();
+	private static Vec3d cameraPos;
+	private static ICamera camera;
 	private static long frameId = 0;
-	
+
 	public static void addLight(Light l) {
+		if (cameraPos.squareDistanceTo(l.x, l.y, l.z) > l.mag + ConfigManager.maxDist) {
+			return;
+		}
+
+		if (camera != null && !camera.isBoundingBoxInFrustum(new AxisAlignedBB(
+				l.x - l.mag,
+				l.y - l.mag,
+				l.z - l.mag,
+				l.x + l.mag,
+				l.y + l.mag,
+				l.z + l.mag
+		))) {
+			return;
+		}
+
 		if (l != null) {
 			lights.add(l);
 		}
@@ -70,12 +95,31 @@ public class LightManager {
 				Shaders.currentProgram.getUniform("lights["+i+"].intensity").setFloat(l.l);
 		}
 	}
-	
+
+	private static Vec3d interpolate(Entity entity, float partialTicks) {
+		return new Vec3d(
+				entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks,
+				entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks,
+				entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks
+		);
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void update(World world) {
-		GatherLightsEvent event = new GatherLightsEvent(lights);
+		Minecraft mc = Minecraft.getMinecraft();
+		Entity cameraEntity = mc.getRenderViewEntity();
+		if (cameraEntity != null) {
+			cameraPos = interpolate(cameraEntity, mc.getRenderPartialTicks());
+			camera = new Frustum();
+			camera.setPosition(cameraPos.x, cameraPos.y, cameraPos.z);
+		} else {
+			camera = null;
+			return;
+		}
+
+		GatherLightsEvent event = new GatherLightsEvent(lights, cameraPos, camera, ConfigManager.maxDist);
 		MinecraftForge.EVENT_BUS.post(event);
-		
+
 		for (Entity e : world.getLoadedEntityList()) {
 			if (e instanceof EntityItem) {
 				Item item = ((EntityItem) e).getItem().getItem();
@@ -128,6 +172,7 @@ public class LightManager {
 				}
 			}
 		}
+
 		for (TileEntity t : world.loadedTileEntityList) {
 			if (t instanceof ILightEventConsumer) {
 				((ILightEventConsumer)t).gatherLights(event);
@@ -137,14 +182,11 @@ public class LightManager {
 		}
 		
 		lights.sort(distComparator);
+		camera = null;
 	}
 	
 	public static void clear() {
 		lights.clear();
-	}
-	
-	public static double distanceSquared(double x1, double y1, double z1, double x2, double y2, double z2) {
-		return (Math.pow((x1-x2),2.0) + Math.pow((y1-y2),2.0) + Math.pow((z1-z2),2.0));
 	}
 	
 	public static DistComparator distComparator = new DistComparator();
@@ -152,10 +194,8 @@ public class LightManager {
 	public static class DistComparator implements Comparator<Light> {
 		@Override
 		public int compare(Light a, Light b) {
-			EntityPlayer p = Minecraft.getMinecraft().player;
-			
-			double dist1 = distanceSquared(a.x, a.y, a.z, p.posX, p.posY, p.posZ);
-			double dist2 = distanceSquared(b.x, b.y, b.z, p.posX, p.posY, p.posZ);
+			double dist1 = cameraPos.squareDistanceTo(a.x, a.y, a.z);
+			double dist2 = cameraPos.squareDistanceTo(b.x, b.y, b.z);
 			return Double.compare(dist1, dist2);
 		}
 	}
